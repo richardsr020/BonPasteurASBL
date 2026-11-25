@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% set settings = settings|default(null) %}
+{% set locale = app.request.locale|default('fr') %}
+{% set current_route = app.request.attributes.get('_route') == 'app_home' ? 'app_home_localized' : app.request.attributes.get('_route') %}
+{% set route_params = app.request.attributes.get('_route_params')|default({}) %}
+
+{% block body %}
+<header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
+        <a href="{{ path('app_home_localized', {_locale: locale}) }}" class="flex items-center gap-3">
+            {% if settings and settings.logoPath %}<img src="{{ settings.logoPath starts with '/' ? settings.logoPath : asset('uploads/' ~ settings.logoPath) }}" alt="Logo ASBL Bon Pasteur" class="h-10 w-10 object-contain">
+            {% else %}<span class="flex h-10 w-10 items-center justify-center rounded-full bg-pasteur-green text-sm font-bold text-white">BP</span>{% endif %}
+            <span class="text-sm font-bold leading-tight text-pasteur-dark">ASBL Bon Pasteur RDC<br><span class="font-normal text-slate-500">Lualaba</span></span>
+        </a>
+        <nav class="hidden items-center gap-5 text-sm text-slate-600 lg:flex">
+            <a class="hover:text-pasteur-dark" href="{{ path('app_home_localized', {_locale: locale}) }}">{{ 'nav.home'|trans }}</a>
+            <a class="hover:text-pasteur-dark" href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
+            <a class="hover:text-pasteur-dark" href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
+            <a class="hover:text-pasteur-dark" href="{{ path('app_articles', {_locale: locale}) }}">{{ 'nav.news'|trans }}</a>
+            <a class="hover:text-pasteur-dark" href="{{ path('app_testimonials', {_locale: locale}) }}">{{ 'nav.testimonials'|trans }}</a>
+            <a class="hover:text-pasteur-dark" href="{{ path('app_partners', {_locale: locale}) }}">{{ 'nav.partners'|trans }}</a>
+            <a class="hover:text-pasteur-dark" href="{{ path('app_documents', {_locale: locale}) }}">{{ 'nav.documents'|trans }}</a>
+            <a class="hover:text-pasteur-dark" href="{{ path('app_pages', {_locale: locale}) }}">{{ 'nav.pages'|trans }}</a>
+            <a class="hover:text-pasteur-dark" href="{{ path('app_contact', {_locale: locale}) }}">{{ 'nav.contact'|trans }}</a>
+        </nav>
+        <div class="flex items-center gap-2">
+            <a class="rounded px-2 py-1 text-xs font-semibold {% if locale == 'en' %}bg-pasteur-green text-white{% else %}text-slate-600{% endif %}" href="{{ path(current_route, route_params|merge({_locale: 'en'})) }}">EN</a>
+            <a class="rounded px-2 py-1 text-xs font-semibold {% if locale == 'fr' %}bg-pasteur-green text-white{% else %}text-slate-600{% endif %}" href="{{ path(current_route, route_params|merge({_locale: 'fr'})) }}">FR</a>
+            <a class="ml-2 hidden rounded-lg bg-pasteur-dark px-3 py-2 text-xs text-white sm:block" href="{{ path('admin_dashboard') }}">{{ 'nav.admin'|trans }}</a>
+        </div>
+    </div>
+    <details class="border-t border-slate-100 px-4 py-2 lg:hidden">
+        <summary class="cursor-pointer text-sm font-medium text-slate-700">Menu</summary>
+        <nav class="mt-3 flex flex-col gap-2 pb-2 text-sm text-slate-600">
+            <a href="{{ path('app_home_localized', {_locale: locale}) }}">{{ 'nav.home'|trans }}</a>
+            <a href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
+            <a href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
+            <a href="{{ path('app_articles', {_locale: locale}) }}">{{ 'nav.news'|trans }}</a>
+            <a href="{{ path('app_testimonials', {_locale: locale}) }}">{{ 'nav.testimonials'|trans }}</a>
+            <a href="{{ path('app_partners', {_locale: locale}) }}">{{ 'nav.partners'|trans }}</a>
+            <a href="{{ path('app_documents', {_locale: locale}) }}">{{ 'nav.documents'|trans }}</a>
+            <a href="{{ path('app_pages', {_locale: locale}) }}">{{ 'nav.pages'|trans }}</a>
+            <a href="{{ path('app_contact', {_locale: locale}) }}">{{ 'nav.contact'|trans }}</a>
+        </nav>
+    </details>
+</header>
+
+<div class="mx-auto max-w-7xl px-4 py-6">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="mb-4 rounded-lg border px-4 py-3 text-sm {% if label == 'error' %}border-red-200 bg-red-50 text-red-700{% else %}border-green-200 bg-green-50 text-green-700{% endif %}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<main>{% block public_content %}{% endblock %}</main>
+
+<footer class="mt-16 bg-pasteur-dark text-white">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-3">
+        <div>
+            <p class="font-semibold">ASBL Bon Pasteur RDC</p>
+            <p class="mt-2 text-sm text-white/70">{{ 'footer.mission'|trans }}</p>
+        </div>
+        <div class="text-sm text-white/70">
+            <p>{{ settings.address ?? 'Province du Lualaba, RDC' }}</p>
+            <p>{{ settings.email ?? 'contact@bonpasteur-rdc.org' }}</p>
+            <p>{{ settings.phone ?? '' }}</p>
+        </div>
+        <nav class="flex flex-wrap gap-4 text-sm text-white/70">
+            <a href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
+            <a href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
+            <a href="{{ path('app_contact', {_locale: locale}) }}">{{ 'nav.contact'|trans }}</a>
+        </nav>
+    </div>
+    <div class="border-t border-white/10 px-4 py-4 text-center text-xs text-white/50">© {{ 'now'|date('Y') }} ASBL Bon Pasteur RDC — {{ 'footer.rights'|trans }}</div>
+</footer>
+{% endblock %}

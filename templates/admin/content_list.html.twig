@@ -1,0 +1,60 @@
+{% extends 'admin/base.html.twig' %}
+
+{% macro itemLabel(item) %}
+    {% if item.title is defined and item.title %}{{ item.title }}
+    {% elseif item.name is defined and item.name %}{{ item.name }}
+    {% elseif item.fullName is defined and item.fullName %}{{ item.fullName }}
+    {% elseif item.beneficiaryName is defined and item.beneficiaryName %}{{ item.beneficiaryName }}
+    {% elseif item.organizationName is defined and item.organizationName %}{{ item.organizationName }}
+    {% else %}#{{ item.id }}{% endif %}
+{% endmacro %}
+
+{% block admin_title %}{{ config.label }}{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 flex items-center justify-between">
+    <div>
+        <h2 class="text-xl font-semibold text-slate-800">{{ config.label }}</h2>
+        <p class="mt-1 text-sm text-slate-500">Gérez les contenus affichés sur le site public.</p>
+    </div>
+    <a href="{{ path('admin_content_new', {resource: resource}) }}" class="bp-btn-primary">Ajouter</a>
+</div>
+
+<div class="bp-card overflow-hidden">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Libellé</th><th class="px-6 py-3">Créé le</th><th class="px-6 py-3 text-right">Actions</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for item in items %}
+                <tr>
+                    <td class="px-6 py-4 text-slate-400">{{ item.id }}</td>
+                    <td class="px-6 py-4 font-medium text-slate-800">{{ _self.itemLabel(item) }}</td>
+                    <td class="px-6 py-4 text-slate-600">{{ item.createdAt is defined and item.createdAt ? item.createdAt|date('d/m/Y') : '-' }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-end gap-2">
+                            <a href="{{ path('admin_content_edit', {resource: resource, id: item.id}) }}" class="bp-btn-outline px-3 py-1 text-xs">Modifier</a>
+                            {% if resource != 'settings' %}
+                            <form method="post" action="{{ path('admin_content_delete', {resource: resource, id: item.id}) }}" data-controller="confirm" data-confirm-message-value="Confirmer la suppression ?">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_content' ~ resource ~ item.id) }}">
+                                <button type="submit" class="bp-btn border border-red-200 px-3 py-1 text-xs text-red-600" data-action="confirm#submit">Supprimer</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Aucun élément pour le moment.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if totalPages > 1 %}
+<nav class="mt-5 flex flex-wrap gap-2">
+    {% for p in 1..totalPages %}
+        <a href="{{ path('admin_' ~ resource, {page: p}) }}" class="bp-btn px-3 py-1 text-xs {% if p == page %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">{{ p }}</a>
+    {% endfor %}
+</nav>
+{% endif %}
+{% endblock %}

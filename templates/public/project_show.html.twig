@@ -1,0 +1,72 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}{{ project.title|translate_content(app.request.locale) }} — ASBL Bon Pasteur RDC{% endblock %}
+
+{% block public_content %}
+<div class="bg-pasteur-dark py-12 text-white">
+    <div class="mx-auto max-w-7xl px-4">
+        <a href="{{ path('app_projects', {_locale: app.request.locale}) }}" class="text-sm text-white/70 hover:text-white">&larr; Nos projets</a>
+        <h1 class="mt-4 text-3xl font-bold md:text-4xl">{{ project.title|translate_content(app.request.locale) }}</h1>
+        <p class="mt-2 text-sm text-white/70">{{ project.status.label() }} · {{ project.geographicZone ?? 'Lualaba' }}</p>
+    </div>
+</div>
+
+<div class="mx-auto max-w-7xl px-4 py-12">
+    {% if project.coverImage %}<img src="{{ project.coverImage starts with '/' ? project.coverImage : asset('uploads/' ~ project.coverImage) }}" alt="{{ project.title|translate_content(app.request.locale) }}" class="mb-10 h-72 w-full rounded-xl object-cover">{% endif %}
+
+    <div class="grid gap-10 lg:grid-cols-3">
+        <div class="space-y-8 lg:col-span-2">
+            <section><h2 class="bp-section-title">Contexte</h2><p class="mt-3 whitespace-pre-line leading-relaxed text-slate-600">{{ (project.context ?? '')|translate_content(app.request.locale) }}</p></section>
+            <section><h2 class="bp-section-title">Objectifs</h2><p class="mt-3 whitespace-pre-line leading-relaxed text-slate-600">{{ (project.objectives ?? '')|translate_content(app.request.locale) }}</p></section>
+            <section><h2 class="bp-section-title">Principales activités</h2><p class="mt-3 whitespace-pre-line leading-relaxed text-slate-600">{{ (project.mainActivities ?? '')|translate_content(app.request.locale) }}</p></section>
+            <section><h2 class="bp-section-title">Résultats obtenus</h2><p class="mt-3 whitespace-pre-line leading-relaxed text-slate-600">{{ (project.resultsObtained ?? '')|translate_content(app.request.locale) }}</p></section>
+            {% if project.medias|length %}
+            <section>
+                <h2 class="bp-section-title">Photos et vidéos</h2>
+                <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    {% for media in project.medias %}
+                        <div class="bp-card overflow-hidden">
+                            {% if media.type == 'video' %}<video controls class="w-full" src="{{ media.path starts with '/' ? media.path : asset('uploads/' ~ media.path) }}"></video>
+                            {% else %}<img src="{{ media.path starts with '/' ? media.path : asset('uploads/' ~ media.path) }}" alt="{{ media.title|translate_content(app.request.locale) }}" class="h-48 w-full object-cover" loading="lazy">{% endif %}
+                            <p class="p-3 text-sm text-slate-600">{{ media.title|translate_content(app.request.locale) }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+        </div>
+
+        <aside class="space-y-6">
+            <div class="bp-card p-6">
+                <h3 class="font-semibold text-pasteur-dark">Informations</h3>
+                <dl class="mt-4 space-y-3 text-sm text-slate-600">
+                    <div><dt class="text-xs uppercase text-slate-400">Groupes cibles</dt><dd>{{ (project.targetGroups ?? '-')|translate_content(app.request.locale) }}</dd></div>
+                    <div><dt class="text-xs uppercase text-slate-400">Période</dt><dd>{{ project.startDate ? project.startDate|date('m/Y') : '-' }} — {{ project.endDate ? project.endDate|date('m/Y') : 'en cours' }}</dd></div>
+                    {% if project.showDonorPublicly and project.partners|length %}
+                        <div><dt class="text-xs uppercase text-slate-400">Partenaires</dt><dd>{{ project.partners|map(p => p.name)|join(', ') }}</dd></div>
+                    {% endif %}
+                </dl>
+            </div>
+            {% if documents|length %}
+            <div class="bp-card p-6">
+                <h3 class="font-semibold text-pasteur-dark">Documents publics</h3>
+                <ul class="mt-3 space-y-2 text-sm">
+                    {% for document in documents %}<li><a class="text-pasteur-dark hover:underline" href="{{ document.path starts with '/' ? document.path : asset('uploads/' ~ document.path) }}" target="_blank" rel="noopener">{{ document.title|translate_content(app.request.locale) }}</a></li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </aside>
+    </div>
+
+    {% if testimonials|length %}
+    <section class="mt-14">
+        <h2 class="bp-section-title">Témoignages</h2>
+        <div class="mt-6 grid gap-5 md:grid-cols-3">
+            {% for testimonial in testimonials %}
+                <figure class="bp-card p-6"><blockquote class="text-sm italic text-slate-600">« {{ testimonial.storyText|translate_content(app.request.locale) }} »</blockquote><figcaption class="mt-3 font-semibold text-pasteur-dark">{{ testimonial.beneficiaryName }}</figcaption></figure>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}{{ article.title|translate_content(app.request.locale) }} — ASBL Bon Pasteur RDC{% endblock %}
+
+{% block public_content %}
+<div class="bg-pasteur-dark py-12 text-white">
+    <div class="mx-auto max-w-7xl px-4">
+        <a href="{{ path('app_articles', {_locale: app.request.locale}) }}" class="text-sm text-white/70 hover:text-white">&larr; Actualités</a>
+        <h1 class="mt-4 text-3xl font-bold md:text-4xl">{{ article.title|translate_content(app.request.locale) }}</h1>
+        <p class="mt-2 text-sm text-white/70">{{ article.category.label() }} · {{ article.publishedAt ? article.publishedAt|date('d/m/Y') : '' }}</p>
+    </div>
+</div>
+
+<article class="mx-auto max-w-4xl px-4 py-12">
+    {% if article.coverImage %}<img src="{{ article.coverImage starts with '/' ? article.coverImage : asset('uploads/' ~ article.coverImage) }}" alt="{{ article.title|translate_content(app.request.locale) }}" class="mb-10 h-80 w-full rounded-xl object-cover">{% endif %}
+    <div class="prose prose-slate max-w-none whitespace-pre-line leading-relaxed text-slate-700">{{ (article.content ?? '')|translate_content(app.request.locale) }}</div>
+    {% if article.attachmentPath %}
+        <p class="mt-8"><a class="font-semibold text-pasteur-dark hover:underline" href="{{ article.attachmentPath starts with '/' ? article.attachmentPath : asset('uploads/' ~ article.attachmentPath) }}" target="_blank" rel="noopener">{{ 'actions.download'|trans }} — pièce jointe</a></p>
+    {% endif %}
+</article>
+{% endblock %}

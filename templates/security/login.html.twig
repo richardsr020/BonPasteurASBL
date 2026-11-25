@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — {{ parent() }}{% endblock %}
+
+{% block body %}
+<main class="flex min-h-screen items-center justify-center bg-pasteur-light px-4">
+    <div class="w-full max-w-md">
+        <div class="mb-8 text-center">
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-pasteur-green text-2xl font-bold text-white">BP</div>
+            <h1 class="text-2xl font-bold text-pasteur-dark">Espace d'administration</h1>
+            <p class="mt-2 text-sm text-slate-600">ASBL Bon Pasteur RDC — Lualaba</p>
+        </div>
+
+        <form method="post" class="bp-card space-y-5 p-8">
+            {% if error %}
+                <div class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <div>
+                <label class="bp-label" for="email">Adresse e-mail</label>
+                <input class="bp-input" type="email" id="email" name="_username" value="{{ lastUsername }}" autocomplete="username" required autofocus>
+            </div>
+
+            <div>
+                <label class="bp-label" for="password">Mot de passe</label>
+                <input class="bp-input" type="password" id="password" name="_password" autocomplete="current-password" required>
+            </div>
+
+            <label class="flex items-center gap-2 text-sm text-slate-600">
+                <input type="checkbox" name="_remember_me" checked>
+                Rester connecté
+            </label>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <button class="bp-btn-primary w-full" type="submit">Se connecter</button>
+        </form>
+
+        <p class="mt-6 text-center text-xs text-slate-500">Accès réservé au personnel autorisé de l'ASBL.</p>
+    </div>
+</main>
+{% endblock %}

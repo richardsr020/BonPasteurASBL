@@ -1,0 +1,36 @@
+nav:
+    home: Accueil
+    about: Qui sommes-nous ?
+    projects: Nos projets
+    news: Actualités
+    testimonials: Témoignages
+    partners: Partenaires
+    documents: Documents publics
+    pages: Pages
+    contact: Contact
+    admin: Administration
+    login: Connexion
+    switch_en: English
+    switch_fr: Français
+home:
+    hero_cta: Découvrir nos actions
+    mission: Notre mission
+    vision: Notre vision
+    domains: Domaines d'intervention
+    key_figures: Chiffres clés
+    current_projects: Projets en cours
+    latest_news: Dernières actualités
+    testimonies: Témoignages
+    partners: Partenaires et bailleurs
+    awards: Prix et distinctions
+footer:
+    mission: Protéger, éduquer, autonomiser.
+    rights: Tous droits réservés.
+contact:
+    title: Contactez-nous
+    send: Envoyer le message
+    success: Votre message a été envoyé. Merci !
+actions:
+    read_more: En savoir plus
+    view_all: Tout voir
+    download: Télécharger

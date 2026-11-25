@@ -1,0 +1,23 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Nouvelle année d'archives{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-xl bp-card p-6">
+    <form method="post" class="space-y-5">
+        <input type="hidden" name="_token" value="{{ csrf_token('new_year') }}">
+        <div>
+            <label class="bp-label" for="year">Année</label>
+            <input class="bp-input" id="year" name="year" type="number" min="2000" max="2100" value="{{ 'now'|date('Y') }}" required>
+        </div>
+        <div>
+            <label class="bp-label" for="description">Description</label>
+            <textarea class="bp-input" id="description" name="description" rows="3"></textarea>
+        </div>
+        <div class="flex gap-3">
+            <button type="submit" class="bp-btn-primary">Créer l'année</button>
+            <a href="{{ path('admin_ged_years') }}" class="bp-btn-outline">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Journal d'audit GED{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+        <h2 class="text-xl font-semibold text-slate-800">Journal d'audit</h2>
+        <p class="mt-1 text-sm text-slate-500">100 dernières actions sur les archives.</p>
+    </div>
+    <a href="{{ path('admin_ged_permissions') }}" class="bp-btn-outline">Permissions</a>
+</div>
+
+<div class="mb-5 flex flex-wrap gap-2">
+    <a href="{{ path('admin_ged_audit') }}" class="bp-btn px-3 py-1.5 text-xs {% if not currentAction %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">Toutes</a>
+    {% for action in actions %}
+        <a href="{{ path('admin_ged_audit', {action: action.value}) }}" class="bp-btn px-3 py-1.5 text-xs {% if currentAction == action.value %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">{{ action.value }}</a>
+    {% endfor %}
+</div>
+
+<div class="bp-card overflow-hidden">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <tr><th class="px-5 py-3">Date</th><th class="px-5 py-3">Utilisateur</th><th class="px-5 py-3">Action</th><th class="px-5 py-3">Entité</th><th class="px-5 py-3">Détails</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for log in logs %}
+                <tr>
+                    <td class="px-5 py-3 text-slate-500">{{ log.createdAt ? log.createdAt|date('d/m/Y H:i') : '-' }}</td>
+                    <td class="px-5 py-3">{{ log.user ? log.user.email : 'Système' }}</td>
+                    <td class="px-5 py-3"><span class="bp-badge bg-slate-100 text-slate-600">{{ log.action.value }}</span></td>
+                    <td class="px-5 py-3">{{ log.entityType }} #{{ log.entityId }}</td>
+                    <td class="px-5 py-3 text-xs text-slate-500">{{ log.details|json_encode }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5" class="px-5 py-8 text-center text-slate-500">Aucune action enregistrée.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

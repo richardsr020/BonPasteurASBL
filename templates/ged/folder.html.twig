@@ -1,0 +1,132 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}{{ folder.name }}{% endblock %}
+
+{% block admin_content %}
+{% set project = folder.archiveProject %}
+<div class="mb-6">
+    <nav class="text-sm text-slate-500">
+        <a href="{{ path('admin_ged_years') }}" class="hover:underline">Archives</a> /
+        <a href="{{ path('admin_ged_year', {id: project.archiveYear.id}) }}" class="hover:underline">{{ project.archiveYear.year }}</a> /
+        <a href="{{ path('admin_ged_project', {id: project.id}) }}" class="hover:underline">{{ project.title }}</a> /
+        <span class="text-slate-800">{{ folder.name }}</span>
+    </nav>
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <h2 class="text-xl font-semibold text-slate-800">{{ folder.name }}</h2>
+        {% if folder.isSystemFolder %}<span class="bp-badge bg-blue-100 text-blue-700">Dossier standardisé protégé</span>{% endif %}
+        {% if folder.isRestrictedToAdmin %}<span class="bp-badge bg-red-100 text-red-700">Accès administrateur</span>{% endif %}
+    </div>
+</div>
+
+<div class="grid gap-6 lg:grid-cols-3">
+    <section class="bp-card p-5 lg:col-span-2" data-controller="ged-upload">
+        <h3 class="font-semibold text-slate-800">Téléverser des documents</h3>
+        <p class="mt-1 text-xs text-slate-500">PDF, Office, images et vidéos — 250 Mo maximum par fichier. Les types MIME sont vérifiés.</p>
+        <form method="post" enctype="multipart/form-data" action="{{ path('admin_ged_upload', {id: folder.id}) }}" data-ged-upload-target="form">
+            <input type="hidden" name="_token" value="{{ csrf_token('upload' ~ folder.id) }}">
+            <label class="mt-4 flex cursor-pointer flex-col items-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center transition hover:border-pasteur-green hover:bg-pasteur-light">
+                <svg class="mb-3 h-8 w-8 text-pasteur-green" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4l4 4M4 16v4h16v-4"/></svg>
+                <span class="text-sm font-medium text-slate-700">Choisir un ou plusieurs fichiers</span>
+                <input class="hidden" type="file" name="files[]" multiple data-ged-upload-target="input">
+            </label>
+            <p class="mt-2 text-xs text-slate-500" data-ged-upload-target="list"></p>
+            <button type="submit" class="bp-btn-primary mt-4">Archiver les fichiers</button>
+        </form>
+    </section>
+
+    <section class="bp-card p-5">
+        <h3 class="font-semibold text-slate-800">Nouveau sous-dossier</h3>
+        <form method="post" class="mt-4 space-y-3">
+            <input type="hidden" name="_token" value="{{ csrf_token('create_folder' ~ folder.id) }}">
+            <input class="bp-input" name="name" placeholder="Nom du dossier" required>
+            <button type="submit" class="bp-btn-outline w-full">Créer le dossier</button>
+        </form>
+        {% if not folder.isSystemFolder %}
+        <hr class="my-5 border-slate-200">
+        <form method="post" class="space-y-3">
+            <input type="hidden" name="_token" value="{{ csrf_token('rename_folder' ~ folder.id) }}">
+            <input class="bp-input" name="name" value="{{ folder.name }}" required>
+            <button type="submit" class="bp-btn-outline w-full">Renommer</button>
+        </form>
+        <form method="post" class="mt-3" data-controller="confirm" data-confirm-message-value="Supprimer ce dossier et son contenu ?">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_folder' ~ folder.id) }}">
+            <button type="submit" class="bp-btn w-full border border-red-200 text-red-600 hover:bg-red-50" data-action="confirm#submit">Supprimer le dossier</button>
+        </form>
+        {% endif %}
+    </section>
+</div>
+
+{% if children|length %}
+<section class="mt-8">
+    <h3 class="mb-3 font-semibold text-slate-800">Sous-dossiers</h3>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {% for child in children %}
+            <a href="{{ path('admin_ged_folder', {id: child.id}) }}" class="bp-card flex items-center gap-3 p-4 hover:border-pasteur-green">
+                <svg class="h-5 w-5 text-pasteur-green" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v10H3z"/></svg>
+                <span class="truncate text-sm font-medium text-slate-700">{{ child.name }}</span>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="bp-card mt-8 overflow-hidden">
+    <div class="border-b border-slate-200 px-6 py-4">
+        <h3 class="font-semibold text-slate-800">Documents ({{ documents|length }})</h3>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full min-w-[720px] text-left text-sm">
+            <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <tr><th class="px-6 py-3">Document</th><th class="px-6 py-3">Type</th><th class="px-6 py-3">Taille</th><th class="px-6 py-3">Version</th><th class="px-6 py-3">Ajouté le</th><th class="px-6 py-3 text-right">Actions</th></tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for document in documents %}
+                    <tr>
+                        <td class="px-6 py-4">
+                            <p class="font-medium text-slate-800">{{ document.title }}</p>
+                            <p class="text-xs text-slate-500">{{ document.originalFilename }}</p>
+                        </td>
+                        <td class="px-6 py-4"><span class="bp-badge bg-slate-100 text-slate-600">{{ document.fileExtension|upper }}</span></td>
+                        <td class="px-6 py-4 text-slate-600">{{ document.humanFileSize }}</td>
+                        <td class="px-6 py-4 text-slate-600">v{{ document.version }}</td>
+                        <td class="px-6 py-4 text-slate-600">{{ document.createdAt|date('d/m/Y H:i') }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-wrap justify-end gap-2">
+                                <button type="button" class="bp-btn-outline px-3 py-1 text-xs" data-action="modal#open" data-url="{{ path('admin_ged_document_preview', {id: document.id}) }}" data-title="{{ document.title }}">Aperçu</button>
+                                <a class="bp-btn-outline px-3 py-1 text-xs" href="{{ path('admin_ged_document_download', {id: document.id}) }}">Télécharger</a>
+                                <form method="post" enctype="multipart/form-data" action="{{ path('admin_ged_document_replace', {id: document.id}) }}" class="flex items-center gap-1">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('replace' ~ document.id) }}">
+                                    <input type="file" name="replacement" class="hidden" id="replacement-{{ document.id }}" onchange="this.form.submit()">
+                                    <label for="replacement-{{ document.id }}" class="bp-btn-outline cursor-pointer px-3 py-1 text-xs">Remplacer</label>
+                                </form>
+                                {% if is_granted('UPLOAD', document) %}
+                                <form method="post" action="{{ path('admin_ged_document_promote', {id: document.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('promote' ~ document.id) }}">
+                                    <button type="submit" class="bp-btn-outline px-3 py-1 text-xs">Publier</button>
+                                </form>
+                                {% endif %}
+                                <form method="post" action="{{ path('admin_ged_document_delete', {id: document.id}) }}" data-controller="confirm" data-confirm-message-value="Placer ce document dans la corbeille ?">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ document.id) }}">
+                                    <button type="submit" class="bp-btn border border-red-200 px-3 py-1 text-xs text-red-600 hover:bg-red-50" data-action="confirm#submit">Corbeille</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6" class="px-6 py-8 text-center text-slate-500">Aucun document dans ce dossier.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<div class="fixed inset-0 z-50 hidden bg-black/70 p-4 md:p-10" role="dialog" aria-modal="true" aria-label="Aperçu du document">
+    <div class="mx-auto flex h-full max-w-5xl flex-col overflow-hidden rounded-xl bg-white">
+        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-3">
+            <h3 class="font-semibold text-slate-800" data-modal-target="title">Aperçu</h3>
+            <button type="button" class="rounded-lg px-3 py-1 text-sm text-slate-500 hover:bg-slate-100" data-action="modal#close">Fermer</button>
+        </div>
+        <iframe class="flex-1" title="Aperçu" loading="lazy" data-modal-target="frame" src="about:blank"></iframe>
+    </div>
+</div>
+{% endblock %}

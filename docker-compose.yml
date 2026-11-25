@@ -1,0 +1,94 @@
+services:
+  php:
+    build:
+      context: .
+      target: ${APP_ENV:-dev}
+    container_name: bonpasteur_php
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      APP_SECRET: ${APP_SECRET:-ChangeMeInProduction}
+      DATABASE_URL: ${DATABASE_URL:-mysql://bonpasteur:bonpasteur@database:3306/bonpasteur?serverVersion=8.0.32&charset=utf8mb4}
+      MAILER_DSN: ${MAILER_DSN:-smtp://mailer:1025}
+      TRANSLATION_API_KEY: ${TRANSLATION_API_KEY:-}
+      TRANSLATION_API_URL: ${TRANSLATION_API_URL:-https://api-free.deepl.com/v2/translate}
+    volumes:
+      - .:/var/www/html
+      - uploads_public:/var/www/html/public/uploads
+      - archives_private:/var/www/html/var/storage/archives
+      - backups_storage:/var/www/html/var/backups
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: bonpasteur_nginx
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - uploads_public:/var/www/html/public/uploads:ro
+    depends_on:
+      - php
+    restart: unless-stopped
+
+  database:
+    image: mysql:8.0
+    container_name: bonpasteur_db
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-bonpasteur}
+      MYSQL_USER: ${MYSQL_USER:-bonpasteur}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-bonpasteur}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+  mailer:
+    image: axllent/mailpit
+    container_name: bonpasteur_mailer
+    profiles: ["dev"]
+    ports:
+      - "${MAILPIT_PORT:-8025}:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    restart: unless-stopped
+
+  cron:
+    build:
+      context: .
+      target: ${APP_ENV:-dev}
+    container_name: bonpasteur_cron
+    entrypoint: /bin/sh -c
+    command: >
+      "echo '0 2 * * * cd /var/www/html && php bin/console app:backup:run >> /var/log/cron.log 2>&1' > /etc/crontabs/root
+       && crond -f -l 2"
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      DATABASE_URL: ${DATABASE_URL:-mysql://bonpasteur:bonpasteur@database:3306/bonpasteur?serverVersion=8.0.32&charset=utf8mb4}
+      TRANSLATION_API_KEY: ${TRANSLATION_API_KEY:-}
+      TRANSLATION_API_URL: ${TRANSLATION_API_URL:-https://api-free.deepl.com/v2/translate}
+    volumes:
+      - .:/var/www/html
+      - uploads_public:/var/www/html/public/uploads
+      - archives_private:/var/www/html/var/storage/archives
+      - backups_storage:/var/www/html/var/backups
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  uploads_public:
+  archives_private:
+  backups_storage:

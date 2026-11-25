@@ -1,0 +1,36 @@
+nav:
+    home: Home
+    about: About us
+    projects: Our projects
+    news: News
+    testimonials: Testimonials
+    partners: Partners
+    documents: Public documents
+    pages: Pages
+    contact: Contact
+    admin: Administration
+    login: Sign in
+    switch_en: English
+    switch_fr: Français
+home:
+    hero_cta: Discover our work
+    mission: Our mission
+    vision: Our vision
+    domains: Areas of intervention
+    key_figures: Key figures
+    current_projects: Ongoing projects
+    latest_news: Latest news
+    testimonies: Testimonies
+    partners: Partners and donors
+    awards: Awards
+footer:
+    mission: Protecting, educating, empowering.
+    rights: All rights reserved.
+contact:
+    title: Contact us
+    send: Send message
+    success: Your message has been sent. Thank you!
+actions:
+    read_more: Learn more
+    view_all: View all
+    download: Download

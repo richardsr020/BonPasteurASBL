@@ -1,0 +1,86 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Recherche dans les archives{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6">
+    <h2 class="text-xl font-semibold text-slate-800">Recherche multicritère</h2>
+    <p class="mt-1 text-sm text-slate-500">Filtrez par mot-clé, année, projet, type de fichier ou plage de dates.</p>
+</div>
+
+<div class="bp-card p-5" data-controller="ged-search" data-ged-search-url-value="{{ path('ged_search_json') }}">
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <div class="lg:col-span-2">
+            <label class="bp-label" for="q">Mots-clés</label>
+            <input class="bp-input" id="q" type="search" placeholder="Titre, nom de fichier..." value="{{ filters.keywords }}" data-ged-search-target="input">
+        </div>
+        <div>
+            <label class="bp-label" for="year">Année</label>
+            <select class="bp-input" id="year" data-ged-search-target="year">
+                <option value="">Toutes</option>
+                {% for year in years %}<option value="{{ year.year }}" {% if filters.year == year.year %}selected{% endif %}>{{ year.year }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="bp-label" for="project">Projet</label>
+            <select class="bp-input" id="project" data-ged-search-target="project">
+                <option value="">Tous</option>
+                {% for project in projects %}<option value="{{ project.id }}" {% if filters.project == project.id %}selected{% endif %}>{{ project.title }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="bp-label" for="type">Type</label>
+            <select class="bp-input" id="type" data-ged-search-target="type">
+                <option value="">Tous</option>
+                <option value="pdf" {% if filters.type == 'pdf' %}selected{% endif %}>PDF</option>
+                <option value="office" {% if filters.type == 'office' %}selected{% endif %}>Office</option>
+                <option value="image" {% if filters.type == 'image' %}selected{% endif %}>Images</option>
+                <option value="video" {% if filters.type == 'video' %}selected{% endif %}>Vidéos</option>
+            </select>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2 lg:col-span-5">
+            <div>
+                <label class="bp-label" for="dateFrom">Depuis le</label>
+                <input class="bp-input" id="dateFrom" type="date" value="{{ filters.dateFrom }}" data-ged-search-target="dateFrom">
+            </div>
+            <div>
+                <label class="bp-label" for="dateTo">Jusqu'au</label>
+                <input class="bp-input" id="dateTo" type="date" value="{{ filters.dateTo }}" data-ged-search-target="dateTo">
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 flex items-center justify-between">
+        <p class="text-sm text-slate-500" data-ged-search-target="count">{{ total }} résultat(s)</p>
+        <span class="hidden text-sm text-slate-500" data-ged-search-target="spinner">Recherche...</span>
+    </div>
+</div>
+
+<div class="bp-card mt-6 overflow-hidden">
+    <div data-ged-search-target="results">
+        {% for document in documents %}
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-6 py-3 last:border-0">
+                <div class="min-w-0">
+                    <p class="truncate text-sm font-medium text-slate-800">{{ document.title }}</p>
+                    <p class="text-xs text-slate-500">
+                        {{ document.folder.archiveProject.archiveYear.year }} · {{ document.folder.archiveProject.title }} · {{ document.folder.name }} · {{ document.humanFileSize }} · v{{ document.version }}
+                    </p>
+                </div>
+                <div class="flex gap-2">
+                    <a class="bp-btn-outline px-3 py-1 text-xs" href="{{ path('admin_ged_document_preview', {id: document.id}) }}" target="_blank" rel="noopener">Aperçu</a>
+                    <a class="bp-btn-primary px-3 py-1 text-xs" href="{{ path('admin_ged_document_download', {id: document.id}) }}">Télécharger</a>
+                </div>
+            </div>
+        {% else %}
+            <p class="p-6 text-sm text-slate-500">Aucun document ne correspond aux critères.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% if totalPages > 1 %}
+<nav class="mt-5 flex flex-wrap gap-2">
+    {% for p in 1..totalPages %}
+        <a href="{{ path('ged_search', {q: filters.keywords, year: filters.year, project: filters.project, type: filters.type, dateFrom: filters.dateFrom, dateTo: filters.dateTo, page: p}) }}" class="bp-btn px-3 py-1 text-xs {% if p == page %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">{{ p }}</a>
+    {% endfor %}
+</nav>
+{% endif %}
+{% endblock %}

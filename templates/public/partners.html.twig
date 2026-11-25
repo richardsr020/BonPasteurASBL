@@ -1,0 +1,37 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}Nos partenaires — ASBL Bon Pasteur RDC{% endblock %}
+
+{% block public_content %}
+<div class="bg-pasteur-dark py-14 text-white">
+    <div class="mx-auto max-w-7xl px-4">
+        <h1 class="text-3xl font-bold md:text-4xl">Nos partenaires</h1>
+        <p class="mt-3 max-w-3xl text-white/75">Partenaires techniques, financiers et bailleurs de fonds.</p>
+    </div>
+</div>
+
+<div class="mx-auto max-w-7xl px-4 py-12">
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {% for partner in partners %}
+            <article class="bp-card p-6 text-center">
+                {% if partner.logoPath %}<img src="{{ partner.logoPath starts with '/' ? partner.logoPath : asset('uploads/' ~ partner.logoPath) }}" alt="{{ partner.name }}" class="mx-auto h-16 object-contain" loading="lazy">{% endif %}
+                <h2 class="mt-4 font-semibold text-slate-800">{{ partner.name }}</h2>
+                <p class="mt-1 text-xs uppercase tracking-wide text-slate-400">{{ partner.type.label() }}</p>
+                <p class="mt-3 text-sm text-slate-600">{{ partner.description ?? '' }}</p>
+                {% if partner.websiteUrl %}<a href="{{ partner.websiteUrl }}" class="mt-3 inline-block text-sm text-pasteur-dark hover:underline" target="_blank" rel="noopener">Site web &rarr;</a>{% endif %}
+            </article>
+        {% else %}
+            <p class="text-sm text-slate-500">Aucun partenaire enregistré.</p>
+        {% endfor %}
+    </div>
+
+    <section class="mt-14">
+        <h2 class="bp-section-title">Prix et distinctions</h2>
+        <div class="mt-5 grid gap-4 md:grid-cols-2">
+            {% for award in awards %}
+                <div class="bp-card p-5"><span class="bp-badge bg-pasteur-light text-pasteur-dark">{{ award.year }}</span><h3 class="mt-2 font-semibold">{{ award.title }}</h3><p class="mt-1 text-sm text-slate-600">{{ award.issuer ?? '' }} — {{ award.description ?? '' }}</p></div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

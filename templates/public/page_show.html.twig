@@ -1,0 +1,16 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}{{ page.title|translate_content(app.request.locale) }} — ASBL Bon Pasteur RDC{% endblock %}
+{% block meta_description %}{{ (page.metaDescription ?? page.title)|translate_content(app.request.locale) }}{% endblock %}
+
+{% block public_content %}
+<div class="bg-pasteur-dark py-12 text-white">
+    <div class="mx-auto max-w-7xl px-4">
+        <a href="{{ path('app_pages', {_locale: app.request.locale}) }}" class="text-sm text-white/70 hover:text-white">&larr; Pages</a>
+        <h1 class="mt-4 text-3xl font-bold md:text-4xl">{{ page.title|translate_content(app.request.locale) }}</h1>
+    </div>
+</div>
+<article class="mx-auto max-w-4xl px-4 py-12">
+    <div class="prose prose-slate max-w-none whitespace-pre-line leading-relaxed text-slate-700">{{ (page.content ?? '')|translate_content(app.request.locale) }}</div>
+</article>
+{% endblock %}

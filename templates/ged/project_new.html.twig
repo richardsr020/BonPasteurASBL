@@ -1,0 +1,26 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Nouveau projet d'archives{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-xl bp-card p-6">
+    <form method="post" class="space-y-5">
+        <input type="hidden" name="_token" value="{{ csrf_token('new_project') }}">
+        <div>
+            <label class="bp-label" for="title">Titre du projet</label>
+            <input class="bp-input" id="title" name="title" required>
+        </div>
+        <div>
+            <label class="bp-label" for="description">Description</label>
+            <textarea class="bp-input" id="description" name="description" rows="4"></textarea>
+        </div>
+        <p class="rounded-lg bg-pasteur-light p-3 text-sm text-pasteur-dark">
+            Les 7 dossiers racines standardisés seront créés automatiquement.
+        </p>
+        <div class="flex gap-3">
+            <button type="submit" class="bp-btn-primary">Créer le projet</button>
+            <a href="{{ path('admin_ged_year', {id: year.id}) }}" class="bp-btn-outline">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

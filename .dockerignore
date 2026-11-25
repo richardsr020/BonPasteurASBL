@@ -1,0 +1,12 @@
+.git
+.gitignore
+var/cache
+var/log
+var/share
+var/data_*.db
+vendor/
+node_modules/
+.env.local
+.env.*.local
+public/assets/
+public/build/

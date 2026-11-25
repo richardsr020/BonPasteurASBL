@@ -1,0 +1,39 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}Nos projets — ASBL Bon Pasteur RDC{% endblock %}
+
+{% block public_content %}
+<div class="bg-pasteur-dark py-14 text-white">
+    <div class="mx-auto max-w-7xl px-4">
+        <h1 class="text-3xl font-bold md:text-4xl">Nos projets</h1>
+        <p class="mt-3 max-w-3xl text-white/75">Interventions en cours et réalisées dans la province du Lualaba.</p>
+    </div>
+</div>
+
+<div class="mx-auto max-w-7xl px-4 py-10">
+    <div class="mb-8 flex flex-wrap gap-2">
+        <a href="{{ path('app_projects', {_locale: app.request.locale}) }}" class="bp-btn px-3 py-1.5 text-xs {% if not currentStatus %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">Tous</a>
+        {% for status in statuses %}
+            <a href="{{ path('app_projects', {_locale: app.request.locale, status: status.value}) }}" class="bp-btn px-3 py-1.5 text-xs {% if currentStatus == status.value %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">{{ status.label() }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {% for project in projects %}
+            <article class="bp-card overflow-hidden">
+                {% if project.coverImage %}<img src="{{ project.coverImage starts with '/' ? project.coverImage : asset('uploads/' ~ project.coverImage) }}" alt="{{ project.title|translate_content(app.request.locale) }}" class="h-48 w-full object-cover" loading="lazy">{% endif %}
+                <div class="p-6">
+                    <span class="bp-badge bg-pasteur-light text-pasteur-dark">{{ project.status.label() }}</span>
+                    <h2 class="mt-3 text-lg font-semibold text-slate-800">{{ project.title|translate_content(app.request.locale) }}</h2>
+                    <p class="mt-2 text-sm text-slate-600">{{ (project.context|length > 220 ? project.context|slice(0, 220) ~ '…' : project.context)|translate_content(app.request.locale) }}</p>
+                    <p class="mt-3 text-xs text-slate-500">{{ (project.geographicZone ?? 'Lualaba')|translate_content(app.request.locale) }}</p>
+                    <a href="{{ path('app_project_show', {_locale: app.request.locale, slug: project.slug}) }}" class="mt-4 inline-block text-sm font-semibold text-pasteur-dark hover:underline">{{ 'actions.read_more'|trans }} &rarr;</a>
+                </div>
+            </article>
+        {% else %}
+            <p class="text-sm text-slate-500">Aucun projet disponible.</p>
+        {% endfor %}
+    </div>
+    {{ include('public/_pagination.html.twig') }}
+</div>
+{% endblock %}

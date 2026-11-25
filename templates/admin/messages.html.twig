@@ -1,0 +1,32 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Messages reçus{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6">
+    <h2 class="text-xl font-semibold text-slate-800">Messages du formulaire de contact</h2>
+</div>
+
+<div class="bp-card overflow-hidden">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <tr><th class="px-6 py-3">Date</th><th class="px-6 py-3">Expéditeur</th><th class="px-6 py-3">Sujet</th><th class="px-6 py-3">Statut</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for message in messages %}
+                <tr class="{% if not message.isRead %}bg-pasteur-light/40{% endif %}">
+                    <td class="px-6 py-4">{{ message.createdAt|date('d/m/Y H:i') }}</td>
+                    <td class="px-6 py-4"><p class="font-medium">{{ message.senderName }}</p><p class="text-xs text-slate-500">{{ message.senderEmail }}</p></td>
+                    <td class="px-6 py-4"><a class="text-pasteur-dark hover:underline" href="{{ path('admin_messages_show', {id: message.id}) }}">{{ message.subject ?: '(sans sujet)' }}</a></td>
+                    <td class="px-6 py-4">
+                        {% if message.isRead %}<span class="bp-badge bg-slate-100 text-slate-600">Lu</span>
+                        {% else %}<span class="bp-badge bg-amber-100 text-amber-700">Non lu</span>{% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Aucun message.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

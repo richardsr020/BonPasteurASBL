@@ -1,0 +1,42 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Archives numériques{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+        <h2 class="text-xl font-semibold text-slate-800">Années d'archives</h2>
+        <p class="mt-1 text-sm text-slate-500">Explorateur sécurisé des dossiers et documents de l'ASBL.</p>
+    </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('admin_ged_year_new') }}" class="bp-btn-primary">Nouvelle année</a>
+    {% endif %}
+</div>
+
+<div class="bp-card overflow-hidden">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <tr><th class="px-6 py-3">Année</th><th class="px-6 py-3">Projets</th><th class="px-6 py-3">Statut</th><th class="px-6 py-3 text-right">Actions</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for year in years %}
+                <tr>
+                    <td class="px-6 py-4 font-semibold text-slate-800">{{ year.year }}</td>
+                    <td class="px-6 py-4 text-slate-600">{{ year.projects|length }}</td>
+                    <td class="px-6 py-4">
+                        {% if year.isLocked %}<span class="bp-badge bg-red-100 text-red-700">Verrouillée</span>{% else %}<span class="bp-badge bg-green-100 text-green-700">Active</span>{% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2">
+                            <a href="{{ path('admin_ged_year', {id: year.id}) }}" class="bp-btn-outline px-3 py-1 text-xs">Ouvrir</a>
+                            <a href="{{ path('admin_ged_export_year', {id: year.id}) }}" class="bp-btn-outline px-3 py-1 text-xs">PDF</a>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Aucune année d'archives.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

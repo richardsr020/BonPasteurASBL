@@ -1,0 +1,28 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}{{ project.title }}{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+        <a href="{{ path('admin_ged_year', {id: project.archiveYear.id}) }}" class="text-sm text-pasteur-green hover:underline">← {{ project.archiveYear.year }}</a>
+        <h2 class="mt-2 text-xl font-semibold text-slate-800">{{ project.title }}</h2>
+        <p class="mt-1 text-sm text-slate-500">{{ project.code }} · {{ documentCount }} document(s)</p>
+    </div>
+    <a href="{{ path('admin_ged_export_project', {id: project.id}) }}" class="bp-btn-outline">Exporter le bordereau PDF</a>
+</div>
+
+<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    {% for folder in project.folders|sort((a, b) => a.displayOrder <=> b.displayOrder) %}
+        <a href="{{ path('admin_ged_folder', {id: folder.id}) }}" class="bp-card block p-5 transition hover:border-pasteur-green hover:shadow-md">
+            <div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-pasteur-light text-pasteur-green">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v10H3z"/></svg>
+            </div>
+            <h3 class="text-sm font-semibold text-slate-800">{{ folder.name }}</h3>
+            <p class="mt-2 text-xs text-slate-500">{{ folder.children|length }} sous-dossier(s) · {{ folder.documents|length }} document(s)</p>
+        </a>
+    {% else %}
+        <p class="text-sm text-slate-500">Aucun dossier disponible.</p>
+    {% endfor %}
+</div>
+{% endblock %}

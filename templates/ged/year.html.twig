@@ -1,0 +1,36 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Année {{ year.year }}{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+        <a href="{{ path('admin_ged_years') }}" class="text-sm text-pasteur-green hover:underline">← Toutes les années</a>
+        <h2 class="mt-2 text-xl font-semibold text-slate-800">Archives {{ year.year }}</h2>
+        {% if year.description %}<p class="mt-1 text-sm text-slate-500">{{ year.description }}</p>{% endif %}
+    </div>
+    <div class="flex flex-wrap gap-2">
+        <a href="{{ path('admin_ged_project_new', {id: year.id}) }}" class="bp-btn-outline">Nouveau projet</a>
+        <a href="{{ path('admin_ged_export_year', {id: year.id}) }}" class="bp-btn-outline">Exporter en PDF</a>
+        {% if is_granted('ROLE_ADMIN') %}
+        <form method="post" action="{{ path('admin_ged_year_lock', {id: year.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('lock_year' ~ year.id) }}">
+            <button type="submit" class="bp-btn-primary">{{ year.isLocked ? 'Déverrouiller' : 'Verrouiller' }} l'année</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    {% for project in projects %}
+        <a href="{{ path('admin_ged_project', {id: project.id}) }}" class="bp-card block p-5 transition hover:border-pasteur-green hover:shadow-md">
+            <p class="text-xs font-semibold uppercase tracking-wide text-pasteur-green">{{ project.code }}</p>
+            <h3 class="mt-2 font-semibold text-slate-800">{{ project.title }}</h3>
+            <p class="mt-2 line-clamp-2 text-sm text-slate-500">{{ project.description }}</p>
+            <p class="mt-4 text-xs text-slate-400">{{ project.folders|length }} dossiers</p>
+        </a>
+    {% else %}
+        <p class="text-sm text-slate-500">Aucun projet d'archives pour cette année.</p>
+    {% endfor %}
+</div>
+{% endblock %}

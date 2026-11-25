@@ -1,0 +1,59 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Permissions GED{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+        <h2 class="text-xl font-semibold text-slate-800">Permissions granulaires</h2>
+        <p class="mt-1 text-sm text-slate-500">Accès par utilisateur, dossier ou projet d'archives.</p>
+    </div>
+    <a href="{{ path('admin_ged_audit') }}" class="bp-btn-outline">Journal d'audit</a>
+</div>
+
+<div class="grid gap-6 lg:grid-cols-2">
+    <div class="bp-card p-6">
+        <h3 class="font-semibold text-slate-800">Attribuer une permission</h3>
+        {{ form_start(form, {'attr': {'class': 'mt-5 space-y-5'}}) }}
+            {% for field in form %}
+                <div>
+                    {{ form_label(field, null, {'label_attr': {'class': 'bp-label'}}) }}
+                    {% set isCheckbox = 'checkbox' in field.vars.block_prefixes %}
+                    {{ form_widget(field, {'attr': {'class': isCheckbox ? 'h-4 w-4 rounded border-slate-300 text-pasteur-green' : 'bp-input'}}) }}
+                    {{ form_errors(field) }}
+                </div>
+            {% endfor %}
+            {{ form_rest(form) }}
+            <button type="submit" class="bp-btn-primary">Enregistrer</button>
+        {{ form_end(form) }}
+    </div>
+
+    <div class="bp-card overflow-hidden">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <tr><th class="px-5 py-3">Utilisateur</th><th class="px-5 py-3">Portée</th><th class="px-5 py-3">Actions</th></tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for permission in permissions %}
+                    <tr>
+                        <td class="px-5 py-3">{{ permission.user.email }}</td>
+                        <td class="px-5 py-3">{{ permission.archiveFolder ? permission.archiveFolder.name : (permission.archiveProject ? permission.archiveProject.title : '-') }}</td>
+                        <td class="px-5 py-3">
+                            <div class="flex flex-wrap gap-2">
+                                {% for action in permission.permissions %}<span class="bp-badge bg-pasteur-light text-pasteur-dark">{{ action }}</span>{% endfor %}
+                                <a href="{{ path('admin_ged_permission_edit', {id: permission.id}) }}" class="text-pasteur-dark hover:underline">Modifier</a>
+                                <form method="post" action="{{ path('admin_ged_permission_delete', {id: permission.id}) }}" data-controller="confirm" data-confirm-message-value="Supprimer cette permission ?">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_permission' ~ permission.id) }}">
+                                    <button type="submit" class="text-red-600 hover:underline" data-action="confirm#submit">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="3" class="px-5 py-8 text-center text-slate-500">Aucune permission spécifique.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html { scroll-behavior: smooth; }
+    body { @apply bg-white text-slate-800 antialiased; }
+    img, iframe, video { @apply max-w-full; }
+}
+
+@layer components {
+    .bp-container { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
+    .bp-btn { @apply inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2; }
+    .bp-btn-primary { @apply bp-btn bg-pasteur-green text-white hover:bg-pasteur-dark focus:ring-pasteur-green; }
+    .bp-btn-outline { @apply bp-btn border border-pasteur-green text-pasteur-green hover:bg-pasteur-light; }
+    .bp-card { @apply rounded-xl border border-slate-200 bg-white shadow-sm; }
+    .bp-input { @apply w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pasteur-green focus:ring-pasteur-green; }
+    .bp-label { @apply mb-1 block text-sm font-medium text-slate-700; }
+    .bp-badge { @apply inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium; }
+    .bp-eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-pasteur-green; }
+    .bp-section-title { @apply mt-2 text-2xl font-bold text-pasteur-dark md:text-3xl; }
+}

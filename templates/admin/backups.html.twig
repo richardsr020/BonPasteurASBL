@@ -1,0 +1,36 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Sauvegardes{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 flex items-center justify-between">
+    <div>
+        <h2 class="text-xl font-semibold text-slate-800">Sauvegardes locales</h2>
+        <p class="mt-1 text-sm text-slate-500">Base de données gzipée, archives privées et fichiers publics en tar.gz. Conservation : 7 quotidiennes, 4 hebdomadaires, 12 mensuelles.</p>
+    </div>
+    <form method="post" action="{{ path('admin_backups_run') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('backup_run') }}">
+        <button type="submit" class="bp-btn-primary">Créer une sauvegarde</button>
+    </form>
+</div>
+
+<div class="bp-card overflow-hidden">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <tr><th class="px-6 py-3">Date</th><th class="px-6 py-3">Lignes</th><th class="px-6 py-3">Fichiers</th><th class="px-6 py-3">Taille</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for backup in backups %}
+                <tr>
+                    <td class="px-6 py-4 font-medium">{{ backup.date|date('d/m/Y H:i:s') }}</td>
+                    <td class="px-6 py-4">{{ backup.rows }}</td>
+                    <td class="px-6 py-4">{{ backup.files }}</td>
+                    <td class="px-6 py-4">{{ (backup.size / 1048576)|round(2) }} Mo</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Aucune sauvegarde pour le moment.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

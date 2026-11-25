@@ -1,0 +1,13 @@
+{% if pagination.pages > 1 %}
+<nav class="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">
+    {% if pagination.currentPage > 1 %}
+        <a href="{{ path(paginationRoute, paginationParams|merge({page: pagination.currentPage - 1})) }}" class="bp-btn border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-600">&larr;</a>
+    {% endif %}
+    {% for page in 1..pagination.pages %}
+        <a href="{{ path(paginationRoute, paginationParams|merge({page: page})) }}" class="bp-btn px-3 py-1.5 text-xs {{ page == pagination.currentPage ? 'bg-pasteur-green text-white' : 'border border-slate-300 bg-white text-slate-600' }}">{{ page }}</a>
+    {% endfor %}
+    {% if pagination.currentPage < pagination.pages %}
+        <a href="{{ path(paginationRoute, paginationParams|merge({page: pagination.currentPage + 1})) }}" class="bp-btn border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-600">&rarr;</a>
+    {% endif %}
+</nav>
+{% endif %}

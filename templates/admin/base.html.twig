@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% set nav_items = [
+    {'route': 'admin_dashboard', 'label': 'Tableau de bord', 'icon': 'M3 12l9-9 9 9M5 10v10h14V10'},
+    {'route': 'admin_ged_years', 'label': 'Archives (GED)', 'icon': 'M4 6h16v12H4zM4 10h16'},
+    {'route': 'admin_ged_permissions', 'label': 'Permissions GED', 'icon': 'M12 2l3 3-3 3-3-3 3-3zM5 14a7 7 0 0114 0'},
+    {'route': 'admin_ged_audit', 'label': "Journal d'audit", 'icon': 'M4 4h16v16H4zM8 8h8M8 12h8M8 16h5'},
+    {'route': 'ged_search', 'label': 'Recherche archives', 'icon': 'M11 19a8 8 0 100-16 8 8 0 000 16zm10 2l-4-4'},
+    {'route': 'admin_projects', 'label': 'Projets publics', 'icon': 'M4 5h16v14H4zM8 9h8M8 13h5'},
+    {'route': 'admin_pages', 'label': 'Pages statiques', 'icon': 'M4 5h16v14H4zM8 9h8'},
+    {'route': 'admin_articles', 'label': 'Actualités', 'icon': 'M4 5h16v14H4zM8 9h8M8 13h8'},
+    {'route': 'admin_testimonials', 'label': 'Témoignages', 'icon': 'M12 12a4 4 0 100-8 4 4 0 000 8zm-8 8a8 8 0 0116 0'},
+    {'route': 'admin_partners', 'label': 'Partenaires', 'icon': 'M12 2l3 3-3 3-3-3 3-3zM5 14a7 7 0 0114 0'},
+    {'route': 'admin_public_documents', 'label': 'Documents publics', 'icon': 'M4 5h16v14H4zM8 9h8M8 13h8'},
+    {'route': 'admin_project_medias', 'label': 'Médias publics', 'icon': 'M4 5h16v14H4zM8 9h8'},
+    {'route': 'admin_settings', 'label': 'Identité & coordonnées', 'icon': 'M12 15a3 3 0 100-6 3 3 0 000 6z'},
+    {'route': 'admin_messages', 'label': 'Messages reçus', 'icon': 'M4 6h16v12H4zM4 7l8 6 8-6'},
+    {'route': 'admin_users', 'label': 'Utilisateurs', 'icon': 'M12 12a4 4 0 100-8 4 4 0 000 8zm-8 8a8 8 0 0116 0'},
+    {'route': 'admin_backups', 'label': 'Sauvegardes', 'icon': 'M12 3v12m0 0l-4-4m4 4l4-4M4 19h16'},
+] %}
+
+{% block body %}
+<div class="flex min-h-screen" data-controller="modal">
+    <aside class="hidden w-64 shrink-0 flex-col bg-pasteur-dark text-white lg:flex">
+        <div class="flex items-center gap-3 border-b border-white/10 px-6 py-5">
+            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-sm font-bold text-pasteur-dark">BP</span>
+            <div>
+                <p class="text-sm font-semibold">Bon Pasteur RDC</p>
+                <p class="text-xs text-white/60">Back-office</p>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+            {% for item in nav_items %}
+                <a href="{{ path(item.route) }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm {% if app.request.get('_route') == item.route %}bg-white/15 font-semibold{% else %}text-white/80 hover:bg-white/10{% endif %}">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="{{ item.icon }}"/></svg>
+                    {{ item.label }}
+                </a>
+            {% endfor %}
+        </nav>
+        <div class="border-t border-white/10 px-4 py-4">
+            <a href="{{ path('app_home') }}" class="block rounded-lg px-3 py-2 text-sm text-white/80 hover:bg-white/10">Voir le site public</a>
+            <form method="post" action="{{ path('app_logout') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                <button type="submit" class="w-full rounded-lg px-3 py-2 text-left text-sm text-white/80 hover:bg-white/10">Se déconnecter</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="min-w-0 flex-1">
+        <header class="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
+            <div>
+                <h1 class="text-lg font-semibold text-slate-800">{% block admin_title %}Administration{% endblock %}</h1>
+                <p class="text-xs text-slate-500">ASBL Bon Pasteur — Province du Lualaba</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="hidden text-sm text-slate-600 sm:block">{{ app.user.fullName }}</span>
+                <span class="bp-badge bg-pasteur-light text-pasteur-dark">{{ app.user.roles|last }}</span>
+            </div>
+        </header>
+
+        <main class="p-6">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="mb-4 rounded-lg border {% if label == 'error' %}border-red-200 bg-red-50 text-red-700{% else %}border-green-200 bg-green-50 text-green-700{% endif %} px-4 py-3 text-sm">{{ message }}</div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}

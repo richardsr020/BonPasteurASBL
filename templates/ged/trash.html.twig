@@ -1,0 +1,49 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block admin_title %}Corbeille des archives{% endblock %}
+
+{% block admin_content %}
+<div class="mb-6 flex items-center justify-between">
+    <div>
+        <h2 class="text-xl font-semibold text-slate-800">Corbeille</h2>
+        <p class="mt-1 text-sm text-slate-500">Seul un administrateur peut supprimer définitivement un document.</p>
+    </div>
+    <a href="{{ path('admin_ged_years') }}" class="bp-btn-outline">Retour aux archives</a>
+</div>
+
+<div class="bp-card overflow-hidden">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+            <tr><th class="px-6 py-3">Document</th><th class="px-6 py-3">Supprimé le</th><th class="px-6 py-3">Par</th><th class="px-6 py-3 text-right">Actions</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for document in documents %}
+                <tr>
+                    <td class="px-6 py-4">
+                        <p class="font-medium">{{ document.title }}</p>
+                        <p class="text-xs text-slate-500">{{ document.originalFilename }}</p>
+                    </td>
+                    <td class="px-6 py-4 text-slate-600">{{ document.deletedAt|date('d/m/Y H:i') }}</td>
+                    <td class="px-6 py-4 text-slate-600">{{ document.deletedBy ?? '-' }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-end gap-2">
+                            <form method="post" action="{{ path('admin_ged_document_restore', {id: document.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('restore' ~ document.id) }}">
+                                <button type="submit" class="bp-btn-outline px-3 py-1 text-xs">Restaurer</button>
+                            </form>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <form method="post" action="{{ path('admin_ged_document_purge', {id: document.id}) }}" data-controller="confirm" data-confirm-message-value="Suppression définitive et irréversible. Continuer ?">
+                                <input type="hidden" name="_token" value="{{ csrf_token('purge' ~ document.id) }}">
+                                <button type="submit" class="bp-btn border border-red-200 px-3 py-1 text-xs text-red-600" data-action="confirm#submit">Purger</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">La corbeille est vide.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
