@@ -3,57 +3,68 @@
 {% block title %}Qui sommes-nous ? — ASBL Bon Pasteur RDC{% endblock %}
 
 {% block public_content %}
-<div class="bg-pasteur-dark py-14 text-white">
-    <div class="mx-auto max-w-7xl px-4">
-        <h1 class="text-3xl font-bold md:text-4xl">Qui sommes-nous ?</h1>
-        <p class="mt-3 max-w-3xl text-white/75">{{ (settings.shortDescription ?? '')|translate_content(app.request.locale) }}</p>
+{% include 'public/_page_header.html.twig' with {
+    eyebrow: 'Notre organisation',
+    title: 'Qui sommes-nous ?',
+    description: (settings.shortDescription ?? '')|translate_content(app.request.locale)
+} %}
+
+<section class="bp-container py-16 md:py-20">
+    <div class="grid gap-10 lg:grid-cols-2">
+        <div class="bp-card p-8 md:p-10">
+            <p class="bp-eyebrow">Notre histoire</p>
+            <p class="mt-5 leading-7 text-slate-600">{{ (settings.history ?? '')|translate_content(app.request.locale) }}</p>
+        </div>
+        <div class="bp-card p-8 md:p-10">
+            <p class="bp-eyebrow">Objectifs institutionnels</p>
+            <p class="mt-5 leading-7 text-slate-600">{{ (settings.objectives ?? '')|translate_content(app.request.locale) }}</p>
+        </div>
     </div>
-</div>
 
-<div class="mx-auto max-w-7xl space-y-14 px-4 py-14">
-    <section class="grid gap-10 lg:grid-cols-2">
-        <div>
-            <h2 class="bp-section-title">Notre histoire</h2>
-            <p class="mt-4 leading-relaxed text-slate-600">{{ (settings.history ?? '')|translate_content(app.request.locale) }}</p>
-        </div>
-        <div>
-            <h2 class="bp-section-title">Objectifs institutionnels</h2>
-            <p class="mt-4 leading-relaxed text-slate-600">{{ (settings.objectives ?? '')|translate_content(app.request.locale) }}</p>
-        </div>
-    </section>
+    <div class="mt-12 grid gap-6 md:grid-cols-3">
+        {% for label, value in {'Mission': settings.mission ?? '', 'Vision': settings.vision ?? '', 'Valeurs': settings.values ?? ''} %}
+            <article class="bp-card-hover p-8">
+                <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-pasteur-light text-sm font-bold text-pasteur-dark">{{ loop.index }}</span>
+                <h2 class="mt-6 text-lg font-semibold text-pasteur-dark">{{ label }}</h2>
+                <p class="mt-3 whitespace-pre-line text-sm leading-6 text-slate-600">{{ value|translate_content(app.request.locale) }}</p>
+            </article>
+        {% endfor %}
+    </div>
 
-    <section class="grid gap-6 md:grid-cols-3">
-        <div class="bp-card p-6"><h3 class="font-semibold text-pasteur-dark">Mission</h3><p class="mt-3 text-sm leading-relaxed text-slate-600">{{ (settings.mission ?? '')|translate_content(app.request.locale) }}</p></div>
-        <div class="bp-card p-6"><h3 class="font-semibold text-pasteur-dark">Vision</h3><p class="mt-3 text-sm leading-relaxed text-slate-600">{{ (settings.vision ?? '')|translate_content(app.request.locale) }}</p></div>
-        <div class="bp-card p-6"><h3 class="font-semibold text-pasteur-dark">Valeurs</h3><p class="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600">{{ (settings.values ?? '')|translate_content(app.request.locale) }}</p></div>
-    </section>
-
-    <section>
-        <h2 class="bp-section-title">Domaines d'intervention</h2>
-        <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+    <div class="mt-16">
+        <p class="bp-eyebrow">Domaines d'intervention</p>
+        <h2 class="bp-section-title">Agir là où l'impact est réel</h2>
+        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {% for domain in domains %}
-                <article class="bp-card p-6"><h3 class="font-semibold text-pasteur-dark">{{ domain.title|translate_content(app.request.locale) }}</h3><p class="mt-2 text-sm text-slate-600">{{ (domain.description ?? domain.summary ?? '')|translate_content(app.request.locale) }}</p></article>
+                <article class="bp-card-hover p-6">
+                    <h3 class="font-semibold text-pasteur-dark">{{ domain.title|translate_content(app.request.locale) }}</h3>
+                    <p class="mt-3 text-sm leading-6 text-slate-600">{{ (domain.description ?? domain.summary ?? '')|translate_content(app.request.locale) }}</p>
+                </article>
             {% endfor %}
         </div>
-    </section>
+    </div>
 
-    <section>
-        <h2 class="bp-section-title">Plan stratégique 2024 — 2028</h2>
-        <p class="mt-4 leading-relaxed text-slate-600">{{ (settings.strategicPlan ?? '')|translate_content(app.request.locale) }}</p>
-    </section>
+    <div class="bp-cta-dark mt-16 items-start !py-12 !text-left md:!px-12">
+        <div class="relative z-10 max-w-3xl">
+            <p class="bp-eyebrow text-amini-gold before:!bg-amini-gold">Plan stratégique</p>
+            <h2 class="mt-6 text-4xl font-medium md:text-5xl">2024 — 2028</h2>
+            <p class="mt-5 max-w-2xl leading-8 text-white/70">{{ (settings.strategicPlan ?? '')|translate_content(app.request.locale) }}</p>
+        </div>
+    </div>
 
-    <section>
+    <div class="mt-16">
+        <p class="bp-eyebrow">Transparence</p>
         <h2 class="bp-section-title">Documents institutionnels publics</h2>
-        <ul class="bp-card mt-5 divide-y divide-slate-100 px-6">
+        <div class="bp-card mt-6 divide-y divide-slate-100 px-6">
             {% for document in documents %}
-                <li class="flex items-center justify-between py-4 text-sm">
-                    <span>{{ document.title|translate_content(app.request.locale) }}</span>
-                    <a class="font-semibold text-pasteur-dark hover:underline" href="{{ document.path starts with '/' ? document.path : asset('uploads/' ~ document.path) }}" target="_blank" rel="noopener">{{ 'actions.download'|trans }}</a>
-                </li>
+                <div class="flex flex-wrap items-center justify-between gap-3 py-5">
+                    <span class="font-medium text-slate-800">{{ document.title|translate_content(app.request.locale) }}</span>
+                    <a class="bp-link-arrow" href="{{ document.path starts with '/' ? document.path : asset('uploads/' ~ document.path) }}" target="_blank" rel="noopener">{{ 'actions.download'|trans }} &rarr;</a>
+                </div>
             {% else %}
-                <li class="py-5 text-sm text-slate-500">Aucun document public.</li>
+                <p class="py-6 text-sm text-slate-500">Aucun document public.</p>
             {% endfor %}
-        </ul>
-    </section>
-</div>
+        </div>
+    </div>
+</section>
 {% endblock %}

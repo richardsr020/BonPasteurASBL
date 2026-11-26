@@ -4,19 +4,72 @@
 
 @layer base {
     html { scroll-behavior: smooth; }
-    body { @apply bg-white text-slate-800 antialiased; }
+    body {
+        @apply bg-white text-amini-ink antialiased;
+        letter-spacing: 0.01em;
+        font-feature-settings: "ss01", "ss02", "ss05", "ss07";
+    }
+    h1, h2, h3, h4 { @apply tracking-[-0.04em]; }
     img, iframe, video { @apply max-w-full; }
+    ::selection { background: #FFC83C; color: #121212; }
 }
 
 @layer components {
-    .bp-container { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
-    .bp-btn { @apply inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2; }
-    .bp-btn-primary { @apply bp-btn bg-pasteur-green text-white hover:bg-pasteur-dark focus:ring-pasteur-green; }
-    .bp-btn-outline { @apply bp-btn border border-pasteur-green text-pasteur-green hover:bg-pasteur-light; }
-    .bp-card { @apply rounded-xl border border-slate-200 bg-white shadow-sm; }
-    .bp-input { @apply w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pasteur-green focus:ring-pasteur-green; }
-    .bp-label { @apply mb-1 block text-sm font-medium text-slate-700; }
-    .bp-badge { @apply inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium; }
-    .bp-eyebrow { @apply text-xs font-bold uppercase tracking-[0.18em] text-pasteur-green; }
-    .bp-section-title { @apply mt-2 text-2xl font-bold text-pasteur-dark md:text-3xl; }
+    .bp-container { @apply mx-auto w-full max-w-[90rem] px-5 sm:px-8 lg:px-12; }
+
+    .bp-btn { @apply inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 font-mono text-[12px] font-medium uppercase tracking-[0.06em] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2; }
+    .bp-btn-primary { @apply bp-btn bg-amini-ink text-white hover:bg-amini-wine focus:ring-amini-wine; }
+    .bp-btn-outline { @apply bp-btn bg-amini-mist text-amini-ink hover:bg-amini-gold focus:ring-amini-wine; }
+    .bp-btn-ghost { @apply bp-btn border border-white/25 bg-white/10 text-white hover:bg-white/20 focus:ring-white; }
+
+    .bp-card { @apply rounded-card border border-amini-line bg-white; }
+    .bp-card-hover { @apply bp-card transition-colors duration-300 hover:bg-amini-mist; }
+    .bp-glass { @apply rounded-card border border-white/20 bg-white/10 backdrop-blur-xl; }
+
+    .bp-input { @apply w-full rounded-xl border border-amini-line bg-amini-mist px-4 py-3 text-sm text-amini-ink transition focus:border-amini-ink focus:bg-white focus:outline-none focus:ring-1 focus:ring-amini-ink; }
+    .bp-label { @apply mb-2 block font-mono text-[12px] uppercase tracking-[0.06em] text-amini-wine; }
+    .bp-badge { @apply inline-flex items-center rounded-full px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.06em]; }
+    .bp-chip { @apply inline-flex min-h-[44px] items-center rounded-full bg-amini-mist px-[18px] font-mono text-[12px] uppercase tracking-[0.06em] text-amini-ink transition hover:bg-amini-gold; }
+
+    .bp-eyebrow { @apply inline-flex items-center gap-[10px] font-mono text-[12px] uppercase tracking-[0.06em] text-amini-wine; }
+    .bp-eyebrow::before { content: ''; width: 9px; height: 9px; flex: none; background: #FFC83C; }
+    .bp-section-title { @apply mt-4 max-w-4xl text-4xl font-medium leading-[1.06] tracking-[-0.04em] text-amini-ink md:text-6xl; }
+    .bp-section-lead { @apply mt-6 max-w-2xl text-base leading-7 text-amini-steel; }
+    .bp-nav-link { @apply relative inline-flex min-h-[44px] items-center rounded-full px-3 font-mono text-[12px] uppercase tracking-[0.06em] text-amini-muted transition-colors hover:bg-amini-mist hover:text-amini-wine; }
+    .bp-nav-link::after { content: ''; position: absolute; bottom: 7px; left: 12px; right: 12px; height: 2px; background: #861D2C; transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease; }
+    .bp-nav-link:hover::after, .bp-nav-link-active::after { transform: scaleX(1); }
+    .bp-nav-link-active { @apply bg-amini-mist text-amini-ink; }
+
+    .site-nav { @apply sticky top-0 z-50 border-b border-amini-line bg-white; transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; animation: nav-in 0.5s ease-out both; }
+    .site-nav.is-scrolled { @apply border-white/50 bg-white/70 shadow-[0_16px_40px_-32px_rgba(18,18,18,0.55)] backdrop-blur-xl; }
+    .bp-nav-dropdown { @apply absolute right-0 top-full mt-3 w-60 rounded-card border border-amini-line bg-white/95 p-2 shadow-2xl backdrop-blur-xl; animation: dropdown-in 0.22s ease-out both; }
+    .bp-nav-dropdown a { @apply w-full justify-start; }
+    .nav-chevron { transition: transform 0.25s ease; }
+    .dropdown-open .nav-chevron { transform: rotate(180deg); }
+    .mobile-menu { animation: dropdown-in 0.22s ease-out both; }
+    .bp-link-arrow { @apply inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.06em] text-amini-wine transition-colors hover:text-amini-ink; }
+    .bp-footer-link { @apply font-mono text-[12px] uppercase tracking-[0.06em] text-white/70 transition-colors hover:text-amini-gold; }
+
+    .bp-hero { @apply relative overflow-hidden bg-amini-mist; }
+    .bp-hero::before { content: ''; position: absolute; width: 32rem; height: 32rem; right: -8rem; top: -14rem; border-radius: 9999px; background: radial-gradient(circle, rgba(255,200,60,0.28), transparent 65%); }
+    .bp-hero::after { content: ''; position: absolute; width: 26rem; height: 26rem; left: -8rem; bottom: -16rem; border-radius: 9999px; background: radial-gradient(circle, rgba(134,29,44,0.10), transparent 65%); }
+
+    .bp-mark { background-image: linear-gradient(transparent 58%, #FFC83C 58% 92%, transparent 92%); padding-left: 0.06em; padding-right: 0.06em; }
+    .bp-cta-dark { @apply relative flex flex-col items-center gap-6 rounded-card px-8 py-14 text-center text-white md:px-16 md:py-20; background-image: radial-gradient(circle at 100% -30%, #861D2C, #4C171F 16%, #271417 37%, #121212); }
+
+    .bp-prose h2 { @apply mt-10 text-3xl font-medium tracking-[-0.04em] text-amini-ink; }
+    .bp-prose h3 { @apply mt-8 text-2xl font-medium text-amini-ink; }
+    .bp-prose p { @apply mt-4 leading-7 text-amini-muted; }
+    .bp-prose ul { @apply mt-4 list-disc space-y-2 pl-6 text-amini-muted; }
+    .bp-prose a { @apply font-semibold text-amini-wine underline decoration-amini-gold underline-offset-4 hover:text-amini-ink; }
+}
+
+@keyframes nav-in {
+    from { opacity: 0; transform: translateY(-100%); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dropdown-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
 }

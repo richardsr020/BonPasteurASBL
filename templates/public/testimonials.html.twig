@@ -3,20 +3,21 @@
 {% block title %}{{ 'nav.testimonials'|trans }} — ASBL Bon Pasteur RDC{% endblock %}
 
 {% block public_content %}
-<div class="bg-pasteur-dark py-14 text-white">
-    <div class="mx-auto max-w-7xl px-4">
-        <h1 class="text-3xl font-bold md:text-4xl">{{ 'nav.testimonials'|trans }}</h1>
-        <p class="mt-3 max-w-3xl text-white/75">Les voix des bénéficiaires et des communautés accompagnées.</p>
-    </div>
-</div>
-<div class="mx-auto max-w-7xl px-4 py-12">
-    <div class="grid gap-6 md:grid-cols-3">
+{% include 'public/_page_header.html.twig' with {
+    eyebrow: 'Voix des communautés',
+    title: 'Témoignages',
+    description: 'Les voix des bénéficiaires et des communautés accompagnées par l’ASBL Bon Pasteur RDC.'
+} %}
+
+<section class="bp-container py-16 md:py-20">
+    <div class="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
         {% for testimonial in testimonials %}
-            <figure class="bp-card p-6">
-                <blockquote class="text-sm italic leading-relaxed text-slate-600">« {{ testimonial.storyText|translate_content(app.request.locale) }} »</blockquote>
-                <figcaption class="mt-4 font-semibold text-pasteur-dark">
-                    {{ testimonial.beneficiaryName|translate_content(app.request.locale) }}
-                    {% if testimonial.roleOrContext %}<span class="block font-normal text-xs text-slate-500">{{ testimonial.roleOrContext|translate_content(app.request.locale) }}</span>{% endif %}
+            <figure class="bp-card-hover relative overflow-hidden p-8">
+                <span class="absolute -right-2 -top-6 text-8xl font-bold text-pasteur-light/70">“</span>
+                <blockquote class="relative text-sm italic leading-7 text-slate-600">{{ testimonial.storyText|translate_content(app.request.locale) }}</blockquote>
+                <figcaption class="mt-6 border-t border-slate-100 pt-5">
+                    <p class="font-semibold text-pasteur-dark">{{ testimonial.beneficiaryName|translate_content(app.request.locale) }}</p>
+                    {% if testimonial.roleOrContext %}<p class="mt-1 text-xs text-slate-500">{{ testimonial.roleOrContext|translate_content(app.request.locale) }}</p>{% endif %}
                 </figcaption>
             </figure>
         {% else %}
@@ -24,5 +25,5 @@
         {% endfor %}
     </div>
     {{ include('public/_pagination.html.twig') }}
-</div>
+</section>
 {% endblock %}

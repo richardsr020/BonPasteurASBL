@@ -3,42 +3,54 @@
 {% block title %}Connexion — {{ parent() }}{% endblock %}
 
 {% block body %}
-<main class="flex min-h-screen items-center justify-center bg-pasteur-light px-4">
-    <div class="w-full max-w-md">
-        <div class="mb-8 text-center">
-            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-pasteur-green text-2xl font-bold text-white">BP</div>
-            <h1 class="text-2xl font-bold text-pasteur-dark">Espace d'administration</h1>
-            <p class="mt-2 text-sm text-slate-600">ASBL Bon Pasteur RDC — Lualaba</p>
+<main class="grid min-h-screen lg:grid-cols-2">
+    <section class="bp-cta-dark hidden items-start !rounded-none !px-14 !py-16 !text-left lg:flex">
+        <div class="relative z-10">
+            <span class="flex h-12 w-12 items-center justify-center bg-amini-gold text-base font-bold text-amini-ink">BP</span>
+            <p class="bp-eyebrow mt-12 text-amini-gold before:!bg-amini-gold">ASBL Bon Pasteur RDC</p>
+            <h1 class="mt-6 max-w-lg text-5xl font-medium leading-[1.05] md:text-6xl">Espace d'administration.</h1>
+            <p class="mt-6 max-w-md text-base leading-8 text-white/70">Lualaba, République Démocratique du Congo.</p>
         </div>
+    </section>
 
-        <form method="post" class="bp-card space-y-5 p-8">
-            {% if error %}
-                <div class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
-                    {{ error.messageKey|trans(error.messageData, 'security') }}
+    <section class="flex items-center justify-center bg-white px-5 py-16 sm:px-10">
+        <div class="w-full max-w-md">
+            <div class="mb-10">
+                <span class="flex h-12 w-12 items-center justify-center bg-amini-ink text-base font-bold text-amini-gold lg:hidden">BP</span>
+                <p class="bp-eyebrow mt-6">Accès sécurisé</p>
+                <h2 class="mt-4 text-3xl font-medium tracking-[-0.04em] text-amini-ink">Se connecter</h2>
+                <p class="mt-3 text-sm text-amini-steel">ASBL Bon Pasteur RDC — Lualaba</p>
+            </div>
+
+            <form method="post" class="grid gap-6 rounded-card border border-amini-line bg-white p-8">
+                {% if error %}
+                    <div class="rounded-xl border border-amini-wine/20 bg-amini-wine/5 p-4 font-mono text-[12px] uppercase tracking-[0.06em] text-amini-wine" role="alert">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
+
+                <div>
+                    <label class="bp-label" for="email">Adresse e-mail</label>
+                    <input class="bp-input" type="email" id="email" name="_username" value="{{ lastUsername }}" autocomplete="username" required autofocus>
                 </div>
-            {% endif %}
 
-            <div>
-                <label class="bp-label" for="email">Adresse e-mail</label>
-                <input class="bp-input" type="email" id="email" name="_username" value="{{ lastUsername }}" autocomplete="username" required autofocus>
-            </div>
+                <div>
+                    <label class="bp-label" for="password">Mot de passe</label>
+                    <input class="bp-input" type="password" id="password" name="_password" autocomplete="current-password" required>
+                </div>
 
-            <div>
-                <label class="bp-label" for="password">Mot de passe</label>
-                <input class="bp-input" type="password" id="password" name="_password" autocomplete="current-password" required>
-            </div>
+                <label class="flex items-center gap-2 text-sm text-amini-muted">
+                    <input type="checkbox" name="_remember_me" checked>
+                    Rester connecté
+                </label>
 
-            <label class="flex items-center gap-2 text-sm text-slate-600">
-                <input type="checkbox" name="_remember_me" checked>
-                Rester connecté
-            </label>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button class="bp-btn-primary w-full" type="submit">Se connecter</button>
+            </form>
 
-            <button class="bp-btn-primary w-full" type="submit">Se connecter</button>
-        </form>
-
-        <p class="mt-6 text-center text-xs text-slate-500">Accès réservé au personnel autorisé de l'ASBL.</p>
-    </div>
+            <p class="mt-6 text-center font-mono text-[11px] uppercase tracking-[0.06em] text-amini-steel">Accès réservé au personnel autorisé de l'ASBL.</p>
+        </div>
+    </section>
 </main>
 {% endblock %}

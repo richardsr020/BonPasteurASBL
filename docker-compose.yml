@@ -7,10 +7,14 @@ services:
     environment:
       APP_ENV: ${APP_ENV:-dev}
       APP_SECRET: ${APP_SECRET:-ChangeMeInProduction}
+      DEFAULT_URI: ${DEFAULT_URI:-http://localhost}
       DATABASE_URL: ${DATABASE_URL:-mysql://bonpasteur:bonpasteur@database:3306/bonpasteur?serverVersion=8.0.32&charset=utf8mb4}
       MAILER_DSN: ${MAILER_DSN:-smtp://mailer:1025}
       TRANSLATION_API_KEY: ${TRANSLATION_API_KEY:-}
       TRANSLATION_API_URL: ${TRANSLATION_API_URL:-https://api-free.deepl.com/v2/translate}
+      PUBLIC_UPLOAD_DIR: ${PUBLIC_UPLOAD_DIR:-public/uploads}
+      ARCHIVE_STORAGE_DIR: ${ARCHIVE_STORAGE_DIR:-var/storage/archives}
+      BACKUP_DIR: ${BACKUP_DIR:-var/backups}
     volumes:
       - .:/var/www/html
       - uploads_public:/var/www/html/public/uploads
@@ -68,15 +72,18 @@ services:
       context: .
       target: ${APP_ENV:-dev}
     container_name: bonpasteur_cron
-    entrypoint: /bin/sh -c
-    command: >
-      "echo '0 2 * * * cd /var/www/html && php bin/console app:backup:run >> /var/log/cron.log 2>&1' > /etc/crontabs/root
-       && crond -f -l 2"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - "echo '0 2 * * * cd /var/www/html && php bin/console app:backup:run >> /var/log/cron.log 2>&1' > /etc/crontabs/root && exec crond -f -l 2 -c /etc/crontabs"
     environment:
       APP_ENV: ${APP_ENV:-dev}
+      DEFAULT_URI: ${DEFAULT_URI:-http://localhost}
       DATABASE_URL: ${DATABASE_URL:-mysql://bonpasteur:bonpasteur@database:3306/bonpasteur?serverVersion=8.0.32&charset=utf8mb4}
       TRANSLATION_API_KEY: ${TRANSLATION_API_KEY:-}
       TRANSLATION_API_URL: ${TRANSLATION_API_URL:-https://api-free.deepl.com/v2/translate}
+      PUBLIC_UPLOAD_DIR: ${PUBLIC_UPLOAD_DIR:-public/uploads}
+      ARCHIVE_STORAGE_DIR: ${ARCHIVE_STORAGE_DIR:-var/storage/archives}
+      BACKUP_DIR: ${BACKUP_DIR:-var/backups}
     volumes:
       - .:/var/www/html
       - uploads_public:/var/www/html/public/uploads

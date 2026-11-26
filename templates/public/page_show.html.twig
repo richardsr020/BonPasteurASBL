@@ -4,13 +4,17 @@
 {% block meta_description %}{{ (page.metaDescription ?? page.title)|translate_content(app.request.locale) }}{% endblock %}
 
 {% block public_content %}
-<div class="bg-pasteur-dark py-12 text-white">
-    <div class="mx-auto max-w-7xl px-4">
-        <a href="{{ path('app_pages', {_locale: app.request.locale}) }}" class="text-sm text-white/70 hover:text-white">&larr; Pages</a>
-        <h1 class="mt-4 text-3xl font-bold md:text-4xl">{{ page.title|translate_content(app.request.locale) }}</h1>
-    </div>
-</div>
-<article class="mx-auto max-w-4xl px-4 py-12">
-    <div class="prose prose-slate max-w-none whitespace-pre-line leading-relaxed text-slate-700">{{ (page.content ?? '')|translate_content(app.request.locale) }}</div>
-</article>
+{% include 'public/_page_header.html.twig' with {
+    eyebrow: 'Page institutionnelle',
+    title: page.title|translate_content(app.request.locale),
+    description: page.metaDescription|translate_content(app.request.locale),
+    back_route: 'app_pages',
+    back_label: 'Pages'
+} %}
+
+<section class="bp-container py-16 md:py-20">
+    <article class="bp-card mx-auto max-w-4xl p-8 md:p-12">
+        <div class="bp-prose whitespace-pre-line">{{ (page.content ?? '')|translate_content(app.request.locale) }}</div>
+    </article>
+</section>
 {% endblock %}

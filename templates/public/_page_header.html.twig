@@ -1,0 +1,19 @@
+{% set eyebrow = eyebrow|default('ASBL Bon Pasteur RDC') %}
+{% set title = title|default('') %}
+{% set description = description|default('') %}
+{% set back_route = back_route|default(null) %}
+{% set back_label = back_label|default('Retour') %}
+
+<section class="bp-hero pb-20 pt-12 md:pb-28 md:pt-20">
+    <div class="pointer-events-none absolute inset-0 opacity-40" style="background-image: linear-gradient(#E1E1E1 1px, transparent 1px), linear-gradient(90deg, #E1E1E1 1px, transparent 1px); background-size: 56px 56px;"></div>
+    <div class="bp-container relative z-10">
+        {% if back_route %}
+            <a href="{{ path(back_route, back_params|default({})|merge({_locale: app.request.locale})) }}" class="bp-chip mb-8" >&larr; {{ back_label }}</a>
+        {% endif %}
+        <div class="max-w-4xl animate-fade-up">
+            <p class="bp-eyebrow">{{ eyebrow }}</p>
+            <h1 class="mt-6 text-5xl font-medium leading-[1.05] md:text-7xl">{{ title }}</h1>
+            {% if description %}<p class="mt-7 max-w-2xl text-base leading-8 text-amini-steel md:text-lg">{{ description }}</p>{% endif %}
+        </div>
+    </div>
+</section>

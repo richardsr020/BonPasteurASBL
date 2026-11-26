@@ -6,73 +6,109 @@
 {% set route_params = app.request.attributes.get('_route_params')|default({}) %}
 
 {% block body %}
-<header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-        <a href="{{ path('app_home_localized', {_locale: locale}) }}" class="flex items-center gap-3">
-            {% if settings and settings.logoPath %}<img src="{{ settings.logoPath starts with '/' ? settings.logoPath : asset('uploads/' ~ settings.logoPath) }}" alt="Logo ASBL Bon Pasteur" class="h-10 w-10 object-contain">
-            {% else %}<span class="flex h-10 w-10 items-center justify-center rounded-full bg-pasteur-green text-sm font-bold text-white">BP</span>{% endif %}
-            <span class="text-sm font-bold leading-tight text-pasteur-dark">ASBL Bon Pasteur RDC<br><span class="font-normal text-slate-500">Lualaba</span></span>
+{% set more_active = current_route in ['app_testimonials', 'app_partners', 'app_documents'] %}
+
+<header class="site-nav" data-controller="site-nav">
+    <div class="bp-container flex h-[72px] items-center justify-between gap-4">
+        <a href="{{ path('app_home_localized', {_locale: locale}) }}" class="group flex items-center gap-3">
+            {% if settings and settings.logoPath %}<img src="{{ settings.logoPath starts with '/' ? settings.logoPath : asset('uploads/' ~ settings.logoPath) }}" alt="Logo ASBL Bon Pasteur" class="h-10 w-10 rounded-xl bg-amini-mist object-contain p-1">{% else %}<span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amini-ink text-xs font-bold tracking-tight text-amini-gold transition-all duration-300 group-hover:-translate-y-0.5 group-hover:bg-amini-wine">BP</span>{% endif %}
+            <span class="font-mono text-[11px] font-medium uppercase leading-tight tracking-[0.06em] text-amini-ink">ASBL Bon Pasteur RDC<br><span class="text-amini-steel">Lualaba</span></span>
         </a>
-        <nav class="hidden items-center gap-5 text-sm text-slate-600 lg:flex">
-            <a class="hover:text-pasteur-dark" href="{{ path('app_home_localized', {_locale: locale}) }}">{{ 'nav.home'|trans }}</a>
-            <a class="hover:text-pasteur-dark" href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
-            <a class="hover:text-pasteur-dark" href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
-            <a class="hover:text-pasteur-dark" href="{{ path('app_articles', {_locale: locale}) }}">{{ 'nav.news'|trans }}</a>
-            <a class="hover:text-pasteur-dark" href="{{ path('app_testimonials', {_locale: locale}) }}">{{ 'nav.testimonials'|trans }}</a>
-            <a class="hover:text-pasteur-dark" href="{{ path('app_partners', {_locale: locale}) }}">{{ 'nav.partners'|trans }}</a>
-            <a class="hover:text-pasteur-dark" href="{{ path('app_documents', {_locale: locale}) }}">{{ 'nav.documents'|trans }}</a>
-            <a class="hover:text-pasteur-dark" href="{{ path('app_pages', {_locale: locale}) }}">{{ 'nav.pages'|trans }}</a>
-            <a class="hover:text-pasteur-dark" href="{{ path('app_contact', {_locale: locale}) }}">{{ 'nav.contact'|trans }}</a>
+
+        <nav class="hidden items-center gap-1 lg:flex" aria-label="Menu principal">
+            <a class="bp-nav-link {{ current_route == 'app_home_localized' ? 'bp-nav-link-active' : '' }}" href="{{ path('app_home_localized', {_locale: locale}) }}">{{ 'nav.home'|trans }}</a>
+            <a class="bp-nav-link {{ current_route == 'app_about' ? 'bp-nav-link-active' : '' }}" href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
+            <a class="bp-nav-link {{ current_route in ['app_projects', 'app_project_show'] ? 'bp-nav-link-active' : '' }}" href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
+            <a class="bp-nav-link {{ current_route in ['app_articles', 'app_article_show'] ? 'bp-nav-link-active' : '' }}" href="{{ path('app_articles', {_locale: locale}) }}">{{ 'nav.news'|trans }}</a>
+
+            <div class="relative">
+                <button type="button" class="bp-nav-link gap-1.5 {{ more_active ? 'bp-nav-link-active' : '' }}" data-action="site-nav#toggle" aria-haspopup="true" aria-expanded="false">
+                    {{ 'nav.more'|trans }}
+                    <svg class="nav-chevron h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2 4l4 4 4-4"/></svg>
+                </button>
+                <div class="bp-nav-dropdown" data-site-nav-target="dropdown" hidden>
+                    <a class="bp-nav-link {{ current_route == 'app_testimonials' ? 'bp-nav-link-active' : '' }}" href="{{ path('app_testimonials', {_locale: locale}) }}">{{ 'nav.testimonials'|trans }}</a>
+                    <a class="bp-nav-link {{ current_route == 'app_partners' ? 'bp-nav-link-active' : '' }}" href="{{ path('app_partners', {_locale: locale}) }}">{{ 'nav.partners'|trans }}</a>
+                    <a class="bp-nav-link {{ current_route == 'app_documents' ? 'bp-nav-link-active' : '' }}" href="{{ path('app_documents', {_locale: locale}) }}">{{ 'nav.documents'|trans }}</a>
+                </div>
+            </div>
         </nav>
+
         <div class="flex items-center gap-2">
-            <a class="rounded px-2 py-1 text-xs font-semibold {% if locale == 'en' %}bg-pasteur-green text-white{% else %}text-slate-600{% endif %}" href="{{ path(current_route, route_params|merge({_locale: 'en'})) }}">EN</a>
-            <a class="rounded px-2 py-1 text-xs font-semibold {% if locale == 'fr' %}bg-pasteur-green text-white{% else %}text-slate-600{% endif %}" href="{{ path(current_route, route_params|merge({_locale: 'fr'})) }}">FR</a>
-            <a class="ml-2 hidden rounded-lg bg-pasteur-dark px-3 py-2 text-xs text-white sm:block" href="{{ path('admin_dashboard') }}">{{ 'nav.admin'|trans }}</a>
+            <div class="hidden items-center gap-1 sm:flex">
+                <a class="rounded-full px-2.5 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.06em] transition {{ locale == 'fr' ? 'bg-amini-ink text-white' : 'text-amini-steel hover:bg-amini-mist hover:text-amini-ink' }}" href="{{ path(current_route, route_params|merge({_locale: 'fr'})) }}">FR</a>
+                <a class="rounded-full px-2.5 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.06em] transition {{ locale == 'en' ? 'bg-amini-ink text-white' : 'text-amini-steel hover:bg-amini-mist hover:text-amini-ink' }}" href="{{ path(current_route, route_params|merge({_locale: 'en'})) }}">EN</a>
+            </div>
+            <a href="{{ path('app_login') }}" class="bp-nav-link hidden lg:inline-flex">{{ 'nav.login'|trans }}</a>
+            <a href="{{ path('app_contact', {_locale: locale}) }}" class="bp-btn-primary hidden min-h-[40px] !px-5 sm:inline-flex">{{ 'nav.contact'|trans }}</a>
+            <details class="relative lg:hidden">
+                <summary class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-amini-line bg-white/70 text-amini-ink backdrop-blur">
+                    <span class="sr-only">Menu</span>
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16"/></svg>
+                </summary>
+                <nav class="bp-card mobile-menu absolute right-0 mt-3 grid max-h-[70vh] w-64 gap-1 overflow-y-auto p-3">
+                    <a class="bp-nav-link w-full justify-start" href="{{ path('app_home_localized', {_locale: locale}) }}">{{ 'nav.home'|trans }}</a>
+                    <a class="bp-nav-link w-full justify-start" href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
+                    <a class="bp-nav-link w-full justify-start" href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
+                    <a class="bp-nav-link w-full justify-start" href="{{ path('app_articles', {_locale: locale}) }}">{{ 'nav.news'|trans }}</a>
+                    <a class="bp-nav-link w-full justify-start" href="{{ path('app_testimonials', {_locale: locale}) }}">{{ 'nav.testimonials'|trans }}</a>
+                    <a class="bp-nav-link w-full justify-start" href="{{ path('app_partners', {_locale: locale}) }}">{{ 'nav.partners'|trans }}</a>
+                    <a class="bp-nav-link w-full justify-start" href="{{ path('app_documents', {_locale: locale}) }}">{{ 'nav.documents'|trans }}</a>
+                    <a class="bp-nav-link w-full justify-start" href="{{ path('app_contact', {_locale: locale}) }}">{{ 'nav.contact'|trans }}</a>
+                    <a class="bp-nav-link w-full justify-start !text-amini-wine" href="{{ path('app_login') }}">{{ 'nav.login'|trans }}</a>
+                </nav>
+            </details>
         </div>
     </div>
-    <details class="border-t border-slate-100 px-4 py-2 lg:hidden">
-        <summary class="cursor-pointer text-sm font-medium text-slate-700">Menu</summary>
-        <nav class="mt-3 flex flex-col gap-2 pb-2 text-sm text-slate-600">
-            <a href="{{ path('app_home_localized', {_locale: locale}) }}">{{ 'nav.home'|trans }}</a>
-            <a href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
-            <a href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
-            <a href="{{ path('app_articles', {_locale: locale}) }}">{{ 'nav.news'|trans }}</a>
-            <a href="{{ path('app_testimonials', {_locale: locale}) }}">{{ 'nav.testimonials'|trans }}</a>
-            <a href="{{ path('app_partners', {_locale: locale}) }}">{{ 'nav.partners'|trans }}</a>
-            <a href="{{ path('app_documents', {_locale: locale}) }}">{{ 'nav.documents'|trans }}</a>
-            <a href="{{ path('app_pages', {_locale: locale}) }}">{{ 'nav.pages'|trans }}</a>
-            <a href="{{ path('app_contact', {_locale: locale}) }}">{{ 'nav.contact'|trans }}</a>
-        </nav>
-    </details>
 </header>
 
-<div class="mx-auto max-w-7xl px-4 py-6">
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="mb-4 rounded-lg border px-4 py-3 text-sm {% if label == 'error' %}border-red-200 bg-red-50 text-red-700{% else %}border-green-200 bg-green-50 text-green-700{% endif %}">{{ message }}</div>
+{% if app.flashes|length %}
+    <div class="bp-container pt-6">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mb-3 rounded-xl border border-amini-line bg-amini-mist px-4 py-3 font-mono text-[12px] uppercase tracking-[0.06em] {% if label == 'error' %}text-amini-wine{% else %}text-amini-ink{% endif %}">{{ message }}</div>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
-</div>
+    </div>
+{% endif %}
 
 <main>{% block public_content %}{% endblock %}</main>
 
-<footer class="mt-16 bg-pasteur-dark text-white">
-    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-3">
+<footer class="relative mt-24 overflow-hidden rounded-t-card bg-amini-ink text-white">
+    <div class="pointer-events-none absolute inset-0 opacity-70" style="background-image: radial-gradient(circle at 100% -30%, #861D2C, #4C171F 16%, #271417 37%, transparent 60%);"></div>
+    <div class="bp-container relative grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4">
         <div>
-            <p class="font-semibold">ASBL Bon Pasteur RDC</p>
-            <p class="mt-2 text-sm text-white/70">{{ 'footer.mission'|trans }}</p>
+            <div class="flex items-center gap-3">
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-amini-gold text-sm font-bold text-amini-ink">BP</span>
+                <span class="font-mono text-[12px] font-medium uppercase tracking-[0.06em]">ASBL Bon Pasteur RDC</span>
+            </div>
+            <p class="mt-5 text-sm leading-7 text-white/65">{{ 'footer.mission'|trans }}</p>
         </div>
-        <div class="text-sm text-white/70">
-            <p>{{ settings.address ?? 'Province du Lualaba, RDC' }}</p>
-            <p>{{ settings.email ?? 'contact@bonpasteur-rdc.org' }}</p>
-            <p>{{ settings.phone ?? '' }}</p>
+        <div>
+            <p class="bp-eyebrow text-amini-gold before:!bg-amini-gold">{{ 'nav.projects'|trans }}</p>
+            <nav class="mt-5 grid gap-3">
+                <a class="bp-footer-link" href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
+                <a class="bp-footer-link" href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
+                <a class="bp-footer-link" href="{{ path('app_articles', {_locale: locale}) }}">{{ 'nav.news'|trans }}</a>
+                <a class="bp-footer-link" href="{{ path('app_testimonials', {_locale: locale}) }}">{{ 'nav.testimonials'|trans }}</a>
+                <a class="bp-footer-link" href="{{ path('app_documents', {_locale: locale}) }}">{{ 'nav.documents'|trans }}</a>
+                <a class="bp-footer-link" href="{{ path('app_pages', {_locale: locale}) }}">{{ 'nav.pages'|trans }}</a>
+            </nav>
         </div>
-        <nav class="flex flex-wrap gap-4 text-sm text-white/70">
-            <a href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
-            <a href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
-            <a href="{{ path('app_contact', {_locale: locale}) }}">{{ 'nav.contact'|trans }}</a>
-        </nav>
+        <div>
+            <p class="bp-eyebrow text-amini-gold before:!bg-amini-gold">{{ 'nav.contact'|trans }}</p>
+            <div class="mt-5 grid gap-3 text-sm text-white/70">
+                <p>{{ settings.address ?? 'Province du Lualaba, RDC' }}</p>
+                <p>{{ settings.email ?? 'contact@bonpasteur-rdc.org' }}</p>
+                <p>{{ settings.phone ?? '' }}</p>
+            </div>
+        </div>
+        <div class="bp-glass p-6">
+            <p class="bp-eyebrow text-amini-gold before:!bg-amini-gold">Ensemble</p>
+            <p class="mt-4 text-sm leading-7 text-white/75">Rejoignez notre mission d'accompagnement des communautés du Lualaba.</p>
+            <a href="{{ path('app_contact', {_locale: locale}) }}" class="bp-btn-ghost mt-6 w-full !text-amini-gold">{{ 'nav.contact'|trans }} &rarr;</a>
+        </div>
     </div>
-    <div class="border-t border-white/10 px-4 py-4 text-center text-xs text-white/50">© {{ 'now'|date('Y') }} ASBL Bon Pasteur RDC — {{ 'footer.rights'|trans }}</div>
+    <div class="relative border-t border-white/10 py-5 text-center font-mono text-[11px] uppercase tracking-[0.06em] text-white/50">© {{ 'now'|date('Y') }} ASBL Bon Pasteur RDC — {{ 'footer.rights'|trans }}</div>
 </footer>
 {% endblock %}

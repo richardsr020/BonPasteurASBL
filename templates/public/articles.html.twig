@@ -3,31 +3,32 @@
 {% block title %}Actualités — ASBL Bon Pasteur RDC{% endblock %}
 
 {% block public_content %}
-<div class="bg-pasteur-dark py-14 text-white">
-    <div class="mx-auto max-w-7xl px-4">
-        <h1 class="text-3xl font-bold md:text-4xl">Actualités et activités</h1>
-        <p class="mt-3 max-w-3xl text-white/75">Publications institutionnelles, activités de terrain et communiqués.</p>
-    </div>
-</div>
+{% include 'public/_page_header.html.twig' with {
+    eyebrow: 'Actualités',
+    title: 'Actualités et activités',
+    description: 'Publications institutionnelles, activités de terrain et communiqués de l’ASBL Bon Pasteur RDC.'
+} %}
 
-<div class="mx-auto max-w-7xl px-4 py-10">
-    <div class="mb-8 flex flex-wrap gap-2">
-        <a href="{{ path('app_articles', {_locale: app.request.locale}) }}" class="bp-btn px-3 py-1.5 text-xs {% if not currentCategory %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">Toutes</a>
+<section class="bp-container py-16 md:py-20">
+    <div class="mb-10 flex flex-wrap gap-2">
+        <a href="{{ path('app_articles', {_locale: app.request.locale}) }}" class="bp-btn px-4 py-2 text-xs {{ not currentCategory ? 'bg-pasteur-dark text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-pasteur-green' }}">Toutes</a>
         {% for category in categories %}
-            <a href="{{ path('app_articles', {_locale: app.request.locale, category: category.value}) }}" class="bp-btn px-3 py-1.5 text-xs {% if currentCategory == category.value %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">{{ category.label() }}</a>
+            <a href="{{ path('app_articles', {_locale: app.request.locale, category: category.value}) }}" class="bp-btn px-4 py-2 text-xs {{ currentCategory == category.value ? 'bg-pasteur-dark text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-pasteur-green' }}">{{ category.label() }}</a>
         {% endfor %}
     </div>
 
-    <div class="grid gap-6 md:grid-cols-3">
+    <div class="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
         {% for article in articles %}
-            <article class="bp-card overflow-hidden">
-                {% if article.coverImage %}<img src="{{ article.coverImage starts with '/' ? article.coverImage : asset('uploads/' ~ article.coverImage) }}" alt="{{ article.title|translate_content(app.request.locale) }}" class="h-44 w-full object-cover" loading="lazy">{% endif %}
+            <article class="bp-card-hover group overflow-hidden">
+                <div class="relative h-44 overflow-hidden bg-pasteur-light">
+                    {% if article.coverImage %}<img src="{{ article.coverImage starts with '/' ? article.coverImage : asset('uploads/' ~ article.coverImage) }}" alt="{{ article.title|translate_content(app.request.locale) }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">{% endif %}
+                    <span class="bp-badge absolute left-4 top-4 bg-white/90 text-pasteur-dark">{{ article.category.label() }}</span>
+                </div>
                 <div class="p-6">
-                    <span class="bp-badge bg-slate-100 text-slate-600">{{ article.category.label() }}</span>
-                    <h2 class="mt-3 text-lg font-semibold text-slate-800">{{ article.title|translate_content(app.request.locale) }}</h2>
-                    <p class="mt-1 text-xs text-slate-500">{{ article.publishedAt ? article.publishedAt|date('d/m/Y') : '' }}</p>
-                    <p class="mt-3 line-clamp-4 text-sm text-slate-600">{{ (article.content|striptags)|translate_content(app.request.locale) }}</p>
-                    <a href="{{ path('app_article_show', {_locale: app.request.locale, slug: article.slug}) }}" class="mt-4 inline-block text-sm font-semibold text-pasteur-dark hover:underline">{{ 'actions.read_more'|trans }} &rarr;</a>
+                    <p class="text-xs text-slate-400">{{ article.publishedAt ? article.publishedAt|date('d/m/Y') : '' }}</p>
+                    <h2 class="mt-3 text-lg font-semibold leading-snug text-pasteur-dark transition group-hover:text-pasteur-green">{{ article.title|translate_content(app.request.locale) }}</h2>
+                    <p class="mt-3 line-clamp-4 text-sm leading-6 text-slate-600">{{ (article.content|striptags)|translate_content(app.request.locale) }}</p>
+                    <a href="{{ path('app_article_show', {_locale: app.request.locale, slug: article.slug}) }}" class="bp-link-arrow mt-6">{{ 'actions.read_more'|trans }} <span>&rarr;</span></a>
                 </div>
             </article>
         {% else %}
@@ -35,5 +36,5 @@
         {% endfor %}
     </div>
     {{ include('public/_pagination.html.twig') }}
-</div>
+</section>
 {% endblock %}

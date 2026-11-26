@@ -3,31 +3,35 @@
 {% block title %}Nos projets — ASBL Bon Pasteur RDC{% endblock %}
 
 {% block public_content %}
-<div class="bg-pasteur-dark py-14 text-white">
-    <div class="mx-auto max-w-7xl px-4">
-        <h1 class="text-3xl font-bold md:text-4xl">Nos projets</h1>
-        <p class="mt-3 max-w-3xl text-white/75">Interventions en cours et réalisées dans la province du Lualaba.</p>
-    </div>
-</div>
+{% include 'public/_page_header.html.twig' with {
+    eyebrow: 'Impact terrain',
+    title: 'Nos projets',
+    description: 'Interventions en cours et réalisées dans la province du Lualaba, construites avec les communautés locales.'
+} %}
 
-<div class="mx-auto max-w-7xl px-4 py-10">
-    <div class="mb-8 flex flex-wrap gap-2">
-        <a href="{{ path('app_projects', {_locale: app.request.locale}) }}" class="bp-btn px-3 py-1.5 text-xs {% if not currentStatus %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">Tous</a>
+<section class="bp-container py-16 md:py-20">
+    <div class="mb-10 flex flex-wrap gap-2">
+        <a href="{{ path('app_projects', {_locale: app.request.locale}) }}" class="bp-btn px-4 py-2 text-xs {{ not currentStatus ? 'bg-pasteur-dark text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-pasteur-green' }}">Tous</a>
         {% for status in statuses %}
-            <a href="{{ path('app_projects', {_locale: app.request.locale, status: status.value}) }}" class="bp-btn px-3 py-1.5 text-xs {% if currentStatus == status.value %}bg-pasteur-green text-white{% else %}border border-slate-300 bg-white text-slate-600{% endif %}">{{ status.label() }}</a>
+            <a href="{{ path('app_projects', {_locale: app.request.locale, status: status.value}) }}" class="bp-btn px-4 py-2 text-xs {{ currentStatus == status.value ? 'bg-pasteur-dark text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-pasteur-green' }}">{{ status.label() }}</a>
         {% endfor %}
     </div>
 
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
         {% for project in projects %}
-            <article class="bp-card overflow-hidden">
-                {% if project.coverImage %}<img src="{{ project.coverImage starts with '/' ? project.coverImage : asset('uploads/' ~ project.coverImage) }}" alt="{{ project.title|translate_content(app.request.locale) }}" class="h-48 w-full object-cover" loading="lazy">{% endif %}
+            <article class="bp-card-hover group overflow-hidden">
+                <div class="relative h-52 overflow-hidden bg-pasteur-light">
+                    {% if project.coverImage %}<img src="{{ project.coverImage starts with '/' ? project.coverImage : asset('uploads/' ~ project.coverImage) }}" alt="{{ project.title|translate_content(app.request.locale) }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">{% endif %}
+                    <div class="absolute inset-0 bg-gradient-to-t from-pasteur-dark/75 to-transparent"></div>
+                    <span class="bp-badge absolute left-4 top-4 bg-white/90 text-pasteur-dark">{{ project.status.label() }}</span>
+                </div>
                 <div class="p-6">
-                    <span class="bp-badge bg-pasteur-light text-pasteur-dark">{{ project.status.label() }}</span>
-                    <h2 class="mt-3 text-lg font-semibold text-slate-800">{{ project.title|translate_content(app.request.locale) }}</h2>
-                    <p class="mt-2 text-sm text-slate-600">{{ (project.context|length > 220 ? project.context|slice(0, 220) ~ '…' : project.context)|translate_content(app.request.locale) }}</p>
-                    <p class="mt-3 text-xs text-slate-500">{{ (project.geographicZone ?? 'Lualaba')|translate_content(app.request.locale) }}</p>
-                    <a href="{{ path('app_project_show', {_locale: app.request.locale, slug: project.slug}) }}" class="mt-4 inline-block text-sm font-semibold text-pasteur-dark hover:underline">{{ 'actions.read_more'|trans }} &rarr;</a>
+                    <h2 class="text-lg font-semibold leading-snug text-pasteur-dark">{{ project.title|translate_content(app.request.locale) }}</h2>
+                    <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{{ (project.context|length > 220 ? project.context|slice(0, 220) ~ '…' : project.context)|translate_content(app.request.locale) }}</p>
+                    <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-5">
+                        <span class="text-xs text-slate-500">{{ (project.geographicZone ?? 'Lualaba')|translate_content(app.request.locale) }}</span>
+                        <a href="{{ path('app_project_show', {_locale: app.request.locale, slug: project.slug}) }}" class="bp-link-arrow">{{ 'actions.read_more'|trans }} <span>&rarr;</span></a>
+                    </div>
                 </div>
             </article>
         {% else %}
@@ -35,5 +39,5 @@
         {% endfor %}
     </div>
     {{ include('public/_pagination.html.twig') }}
-</div>
+</section>
 {% endblock %}

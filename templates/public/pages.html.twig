@@ -3,22 +3,24 @@
 {% block title %}Pages — ASBL Bon Pasteur RDC{% endblock %}
 
 {% block public_content %}
-<div class="bg-pasteur-dark py-14 text-white">
-    <div class="mx-auto max-w-7xl px-4">
-        <h1 class="text-3xl font-bold md:text-4xl">Pages institutionnelles</h1>
-    </div>
-</div>
-<div class="mx-auto max-w-7xl px-4 py-12">
-    <div class="grid gap-5 md:grid-cols-3">
+{% include 'public/_page_header.html.twig' with {
+    eyebrow: 'Informations',
+    title: 'Pages institutionnelles',
+    description: 'Charte, politique de confidentialité et documents de référence de l’association.'
+} %}
+
+<section class="bp-container py-16 md:py-20">
+    <div class="grid gap-6 md:grid-cols-3">
         {% for page in pages %}
-            <article class="bp-card p-6">
-                <h2 class="font-semibold text-pasteur-dark">{{ page.title|translate_content(app.request.locale) }}</h2>
-                {% if page.metaDescription %}<p class="mt-2 text-sm text-slate-600">{{ page.metaDescription|translate_content(app.request.locale) }}</p>{% endif %}
-                <a href="{{ path('app_page_show', {_locale: app.request.locale, slug: page.slug}) }}" class="mt-4 inline-block text-sm font-semibold text-pasteur-dark hover:underline">{{ 'actions.read_more'|trans }} &rarr;</a>
+            <article class="bp-card-hover group flex flex-col p-8">
+                <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-pasteur-light text-sm font-bold text-pasteur-dark">{{ loop.index }}</span>
+                <h2 class="mt-6 text-lg font-semibold text-pasteur-dark">{{ page.title|translate_content(app.request.locale) }}</h2>
+                {% if page.metaDescription %}<p class="mt-3 text-sm leading-6 text-slate-600">{{ page.metaDescription|translate_content(app.request.locale) }}</p>{% endif %}
+                <a href="{{ path('app_page_show', {_locale: app.request.locale, slug: page.slug}) }}" class="bp-link-arrow mt-auto pt-6">{{ 'actions.read_more'|trans }} <span>&rarr;</span></a>
             </article>
         {% else %}
             <p class="text-sm text-slate-500">Aucune page publiée.</p>
         {% endfor %}
     </div>
-</div>
+</section>
 {% endblock %}

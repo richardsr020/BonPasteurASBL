@@ -4,159 +4,228 @@
 {% block meta_description %}{{ (settings.shortDescription ?? 'Association humanitaire au Lualaba : protection de l\'enfant, éducation et autonomisation des femmes.')|translate_content(app.request.locale) }}{% endblock %}
 
 {% block public_content %}
-<section class="relative bg-pasteur-dark text-white" data-controller="home-carousel">
+<section class="relative min-h-[860px] overflow-hidden bg-white lg:min-h-[680px]" data-controller="home-carousel">
     {% for slide in slides %}
-        <div class="relative h-[420px] md:h-[560px]" data-home-carousel-target="slide">
-            <img {% if loop.first %}src="{{ slide.imagePath starts with '/' ? slide.imagePath : asset('uploads/' ~ slide.imagePath) }}"{% else %}data-src="{{ slide.imagePath starts with '/' ? slide.imagePath : asset('uploads/' ~ slide.imagePath) }}" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="{% endif %} alt="{{ slide.title }}" class="absolute inset-0 h-full w-full object-cover opacity-35" loading="{% if loop.first %}eager{% else %}lazy{% endif %}">
-            <div class="relative mx-auto flex h-full max-w-7xl flex-col justify-center px-4">
-                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-pasteur-light">ASBL Bon Pasteur RDC</p>
-                <h1 class="mt-3 max-w-3xl text-3xl font-bold leading-tight md:text-5xl">{{ slide.title }}</h1>
-                {% if slide.subtitle %}<p class="mt-4 max-w-2xl text-base text-white/80 md:text-lg">{{ slide.subtitle }}</p>{% endif %}
-                {% if slide.ctaUrl %}
-                    <div class="mt-7">
-                        <a href="{{ slide.ctaUrl }}" class="bp-btn bg-white text-pasteur-dark hover:bg-pasteur-light">{{ slide.ctaLabel ?: 'Découvrir' }}</a>
-                    </div>
-                {% endif %}
+        <div class="absolute inset-0" data-home-carousel-target="slide">
+            <div class="bp-container grid min-h-[860px] items-center gap-12 py-16 lg:min-h-[680px] lg:grid-cols-2 lg:gap-20">
+                <div class="animate-fade-up">
+                    <p class="bp-eyebrow">{{ 'ASBL Bon Pasteur RDC'|trans }}</p>
+                    <h1 class="mt-6 text-5xl font-medium leading-[1.04] md:text-6xl lg:text-[76px] lg:leading-[1.02]">{{ slide.title }}</h1>
+                    {% if slide.subtitle %}<p class="mt-7 max-w-xl text-base leading-8 text-amini-steel md:text-lg">{{ slide.subtitle }}</p>{% endif %}
+                    {% if slide.ctaUrl %}
+                        <div class="mt-10 flex flex-wrap gap-3">
+                            <a href="{{ slide.ctaUrl }}" class="bp-btn-primary">{{ slide.ctaLabel ?: 'Découvrir' }} &rarr;</a>
+                            <a href="{{ path('app_about', {_locale: app.request.locale}) }}" class="bp-btn-outline">{{ 'nav.about'|trans }}</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="relative h-64 rounded-card bg-amini-mist p-3 md:h-96 lg:h-[480px]">
+                    <img {% if loop.first %}src="{{ slide.imagePath starts with '/' ? slide.imagePath : asset('uploads/' ~ slide.imagePath) }}"{% else %}data-src="{{ slide.imagePath starts with '/' ? slide.imagePath : asset('uploads/' ~ slide.imagePath) }}" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="{% endif %} alt="{{ slide.title }}" class="h-full w-full rounded-[18px] object-cover" loading="{% if loop.first %}eager{% else %}lazy{% endif %}">
+                    <span class="absolute -bottom-4 -left-4 h-9 w-9 bg-amini-gold"></span>
+                </div>
             </div>
         </div>
     {% else %}
-        <div class="flex h-[420px] items-center bg-pasteur-dark md:h-[560px]">
-            <div class="mx-auto max-w-7xl px-4">
-                <h1 class="max-w-3xl text-3xl font-bold md:text-5xl">{{ settings.organizationName ?? 'ASBL Bon Pasteur RDC' }}</h1>
-                <p class="mt-4 max-w-2xl text-white/80">{{ (settings.shortDescription ?? '')|translate_content(app.request.locale) }}</p>
+        <div class="bp-container grid min-h-[860px] items-center gap-12 py-16 lg:min-h-[680px] lg:grid-cols-2 lg:gap-20">
+            <div class="animate-fade-up">
+                <p class="bp-eyebrow">ASBL Bon Pasteur RDC</p>
+                <h1 class="mt-6 text-5xl font-medium leading-[1.04] md:text-6xl lg:text-[76px] lg:leading-[1.02]">{{ settings.organizationName ?? 'ASBL Bon Pasteur RDC' }}</h1>
+                <p class="mt-7 max-w-xl text-base leading-8 text-amini-steel md:text-lg">{{ (settings.shortDescription ?? '')|translate_content(app.request.locale) }}</p>
+                <a href="{{ path('app_about', {_locale: app.request.locale}) }}" class="bp-btn-primary mt-10">{{ 'nav.about'|trans }} &rarr;</a>
+            </div>
+            <div class="relative hidden h-[480px] rounded-card bg-amini-mist lg:block">
+                <span class="absolute -bottom-4 -left-4 h-9 w-9 bg-amini-gold"></span>
             </div>
         </div>
     {% endfor %}
+
     {% if slides|length > 1 %}
-        <div class="absolute inset-x-0 bottom-5 flex justify-center gap-2">
+        <div class="absolute inset-x-0 bottom-6 z-20 flex justify-center gap-2">
             {% for slide in slides %}
-                <button type="button" class="h-2.5 w-2.5 rounded-full bg-white/60 hover:bg-white" data-action="home-carousel#goTo" data-index="{{ loop.index0 }}" aria-label="Diapositive {{ loop.index }}"></button>
+                <button type="button" class="h-2.5 w-2.5 rounded-full bg-amini-line transition-all duration-300 hover:bg-amini-wine data-[active=true]:w-8 data-[active=true]:rounded-full data-[active=true]:bg-amini-gold" data-action="home-carousel#goTo" data-index="{{ loop.index0 }}" aria-label="Diapositive {{ loop.index }}"></button>
             {% endfor %}
         </div>
     {% endif %}
 </section>
 
-<section class="mx-auto max-w-7xl px-4 py-14">
-    <div class="grid gap-10 lg:grid-cols-2">
+{% set figures = settings.keyFigures ?? [] %}
+{% if figures|length %}
+    <section class="border-y border-amini-line bg-white py-10">
+        <div class="bp-container">
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                {% for figure in figures %}
+                    <div class="flex items-start gap-4">
+                        <span class="mt-2 h-2 w-2 shrink-0 bg-amini-gold"></span>
+                        <div>
+                            <p class="text-4xl font-medium tracking-[-0.04em] text-amini-ink">{{ figure.value ?? figure.number ?? '' }}</p>
+                            <p class="mt-2 font-mono text-[12px] uppercase tracking-[0.06em] text-amini-steel">{{ figure.label ?? '' }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+<section class="py-24 md:py-32">
+    <div class="bp-container grid items-start gap-14 lg:grid-cols-2 lg:gap-24">
         <div>
             <p class="bp-eyebrow">{{ 'home.mission'|trans }}</p>
             <h2 class="bp-section-title">{{ settings.organizationName ?? 'ASBL Bon Pasteur RDC' }}</h2>
-            <p class="mt-4 leading-relaxed text-slate-600">{{ (settings.shortDescription ?? '')|translate_content(app.request.locale) }}</p>
-            <p class="mt-4 leading-relaxed text-slate-600">{{ (settings.mission ?? '')|translate_content(app.request.locale) }}</p>
-            <a href="{{ path('app_about', {_locale: app.request.locale}) }}" class="bp-btn-outline mt-6 inline-block">{{ 'actions.read_more'|trans }}</a>
+            <p class="bp-section-lead">{{ (settings.shortDescription ?? '')|translate_content(app.request.locale) }}</p>
+            <p class="mt-6 max-w-xl leading-8 text-amini-muted">{{ (settings.mission ?? '')|translate_content(app.request.locale) }}</p>
+            <a href="{{ path('app_about', {_locale: app.request.locale}) }}" class="bp-link-arrow mt-10">{{ 'actions.read_more'|trans }} <span>&rarr;</span></a>
         </div>
-        <div class="bp-card bg-white p-6">
-            <p class="bp-eyebrow">{{ 'home.vision'|trans }}</p>
-            <p class="mt-3 leading-relaxed text-slate-600">{{ (settings.vision ?? '')|translate_content(app.request.locale) }}</p>
-            {% set figures = settings.keyFigures ?? [] %}
-            {% if figures|length %}
-                <div class="mt-6 grid grid-cols-2 gap-4 border-t border-slate-100 pt-6">
-                    {% for figure in figures %}
-                        <div>
-                            <p class="text-2xl font-bold text-pasteur-dark">{{ figure.value ?? figure.number ?? '' }}</p>
-                            <p class="text-xs text-slate-500">{{ figure.label ?? '' }}</p>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+        <div class="rounded-card bg-amini-mist p-8 md:p-12">
+            <div class="flex h-12 w-12 items-center justify-center bg-amini-ink text-amini-gold">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3l8 4v6c0 4.5-3.2 7.6-8 8-4.8-.4-8-3.5-8-8V7l8-4z"/></svg>
+            </div>
+            <p class="bp-eyebrow mt-8">{{ 'home.vision'|trans }}</p>
+            <p class="mt-5 text-xl font-medium leading-relaxed tracking-[-0.02em] text-amini-ink">{{ (settings.vision ?? '')|translate_content(app.request.locale) }}</p>
+            <div class="mt-10 flex items-center gap-3 border-t border-amini-line pt-6">
+                <span class="h-2 w-2 bg-amini-gold"></span>
+                <p class="font-mono text-[12px] uppercase tracking-[0.06em] text-amini-wine">Lualaba, République Démocratique du Congo</p>
+            </div>
         </div>
     </div>
 </section>
 
-<section class="bg-white py-14">
-    <div class="mx-auto max-w-7xl px-4">
-        <p class="bp-eyebrow">{{ 'home.domains'|trans }}</p>
-        <h2 class="bp-section-title">{{ 'home.domains'|trans }}</h2>
-        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+<section class="bg-amini-mist py-24 md:py-32">
+    <div class="bp-container">
+        <div class="max-w-3xl">
+            <p class="bp-eyebrow">{{ 'home.domains'|trans }}</p>
+            <h2 class="bp-section-title">Des réponses concrètes aux besoins locaux</h2>
+            <p class="bp-section-lead">Protection, éducation, santé et autonomisation : nos interventions se construisent avec les communautés.</p>
+        </div>
+        <div class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {% for domain in domains %}
-                <article class="bp-card p-6">
-                    <h3 class="font-semibold text-pasteur-dark">{{ domain.title|translate_content(app.request.locale) }}</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-slate-600">{{ (domain.summary ?? '')|translate_content(app.request.locale) }}</p>
+                <article class="group flex min-h-[280px] flex-col justify-between rounded-card border border-amini-line bg-white p-7 transition-colors hover:bg-amini-ink hover:text-white">
+                    <span class="font-mono text-[12px] tracking-[0.06em] text-amini-wine group-hover:text-amini-gold">{{ '%02d'|format(loop.index) }}</span>
+                    <div>
+                        <h3 class="text-xl font-medium leading-snug">{{ domain.title|translate_content(app.request.locale) }}</h3>
+                        <p class="mt-4 text-sm leading-7 text-amini-steel group-hover:text-white/70">{{ (domain.summary ?? '')|translate_content(app.request.locale) }}</p>
+                    </div>
                 </article>
             {% else %}
-                <p class="text-sm text-slate-500">Domaines bientôt disponibles.</p>
+                <p class="text-sm text-amini-steel">Domaines bientôt disponibles.</p>
             {% endfor %}
         </div>
     </div>
 </section>
 
-<section class="mx-auto max-w-7xl px-4 py-14">
-    <div class="flex items-end justify-between gap-4">
-        <div>
-            <p class="bp-eyebrow">{{ 'home.current_projects'|trans }}</p>
-            <h2 class="bp-section-title">{{ 'home.current_projects'|trans }}</h2>
+<section class="py-24 md:py-32">
+    <div class="bp-container">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+            <div class="max-w-2xl">
+                <p class="bp-eyebrow">{{ 'home.current_projects'|trans }}</p>
+                <h2 class="bp-section-title">Nos projets en cours</h2>
+            </div>
+            <a href="{{ path('app_projects', {_locale: app.request.locale}) }}" class="bp-btn-outline">{{ 'actions.view_all'|trans }} &rarr;</a>
         </div>
-        <a href="{{ path('app_projects', {_locale: app.request.locale}) }}" class="bp-btn-outline">{{ 'actions.view_all'|trans }}</a>
-    </div>
-    <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {% for project in projects %}
-            <article class="bp-card overflow-hidden">
-                {% if project.coverImage %}<img src="{{ project.coverImage starts with '/' ? project.coverImage : asset('uploads/' ~ project.coverImage) }}" alt="{{ project.title|translate_content(app.request.locale) }}" class="h-40 w-full object-cover" loading="lazy">{% endif %}
-                <div class="p-5">
-                    <span class="bp-badge bg-pasteur-light text-pasteur-dark">{{ project.status.label() }}</span>
-                    <h3 class="mt-3 font-semibold text-slate-800">{{ project.title|translate_content(app.request.locale) }}</h3>
-                    <p class="mt-2 line-clamp-3 text-sm text-slate-600">{{ (project.context ?? '')|translate_content(app.request.locale) }}</p>
-                    <a href="{{ path('app_project_show', {_locale: app.request.locale, slug: project.slug}) }}" class="mt-4 inline-block text-sm font-semibold text-pasteur-dark hover:underline">{{ 'actions.read_more'|trans }} &rarr;</a>
-                </div>
-            </article>
-        {% endfor %}
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            {% for project in projects %}
+                <article class="group flex flex-col overflow-hidden rounded-card border border-amini-line bg-white transition-colors hover:border-amini-ink">
+                    <div class="relative h-52 overflow-hidden bg-amini-mist">
+                        {% if project.coverImage %}<img src="{{ project.coverImage starts with '/' ? project.coverImage : asset('uploads/' ~ project.coverImage) }}" alt="{{ project.title|translate_content(app.request.locale) }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">{% endif %}
+                        <span class="absolute left-4 top-4 rounded-full bg-white px-3 py-1 font-mono text-[11px] uppercase tracking-[0.06em] text-amini-wine">{{ project.status.label() }}</span>
+                    </div>
+                    <div class="flex flex-1 flex-col p-6">
+                        <h3 class="text-lg font-medium leading-snug text-amini-ink">{{ project.title|translate_content(app.request.locale) }}</h3>
+                        <p class="mt-3 line-clamp-3 text-sm leading-7 text-amini-steel">{{ (project.context ?? '')|translate_content(app.request.locale) }}</p>
+                        <a href="{{ path('app_project_show', {_locale: app.request.locale, slug: project.slug}) }}" class="bp-link-arrow mt-auto pt-6">{{ 'actions.read_more'|trans }} <span>&rarr;</span></a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
     </div>
 </section>
 
-<section class="bg-white py-14">
-    <div class="mx-auto max-w-7xl px-4">
-        <p class="bp-eyebrow">{{ 'home.latest_news'|trans }}</p>
-        <h2 class="bp-section-title">{{ 'home.latest_news'|trans }}</h2>
-        <div class="mt-8 grid gap-6 md:grid-cols-3">
+<section class="bg-amini-mist py-24 md:py-32">
+    <div class="bp-container">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+            <div class="max-w-2xl">
+                <p class="bp-eyebrow">{{ 'home.latest_news'|trans }}</p>
+                <h2 class="bp-section-title">Actualités du terrain</h2>
+            </div>
+            <a href="{{ path('app_articles', {_locale: app.request.locale}) }}" class="bp-btn-outline">{{ 'actions.view_all'|trans }} &rarr;</a>
+        </div>
+        <div class="mt-12 grid gap-6 lg:grid-cols-3">
             {% for article in articles %}
-                <article class="bp-card p-6">
-                    <span class="bp-badge bg-slate-100 text-slate-600">{{ article.category.label() }}</span>
-                    <h3 class="mt-3 font-semibold text-slate-800">{{ article.title|translate_content(app.request.locale) }}</h3>
-                    <p class="mt-1 text-xs text-slate-500">{{ article.publishedAt ? article.publishedAt|date('d/m/Y') : '' }}</p>
-                    <p class="mt-3 line-clamp-3 text-sm text-slate-600">{{ (article.content|striptags)|translate_content(app.request.locale) }}</p>
-                    <a href="{{ path('app_article_show', {_locale: app.request.locale, slug: article.slug}) }}" class="mt-4 inline-block text-sm font-semibold text-pasteur-dark hover:underline">{{ 'actions.read_more'|trans }} &rarr;</a>
+                <article class="group flex flex-col rounded-card border border-amini-line bg-white p-8 transition-colors hover:bg-white/60">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="font-mono text-[11px] uppercase tracking-[0.06em] text-amini-wine">{{ article.category.label() }}</span>
+                        <span class="font-mono text-[11px] text-amini-steel">{{ article.publishedAt ? article.publishedAt|date('d/m/Y') : '' }}</span>
+                    </div>
+                    <h3 class="mt-6 text-xl font-medium leading-snug text-amini-ink transition-colors group-hover:text-amini-wine">{{ article.title|translate_content(app.request.locale) }}</h3>
+                    <p class="mt-4 line-clamp-3 text-sm leading-7 text-amini-steel">{{ (article.content|striptags)|translate_content(app.request.locale) }}</p>
+                    <a href="{{ path('app_article_show', {_locale: app.request.locale, slug: article.slug}) }}" class="bp-link-arrow mt-auto pt-8">{{ 'actions.read_more'|trans }} <span>&rarr;</span></a>
                 </article>
             {% else %}
-                <p class="text-sm text-slate-500">Aucune actualité publiée.</p>
+                <p class="text-sm text-amini-steel">Aucune actualité publiée.</p>
             {% endfor %}
         </div>
     </div>
 </section>
 
-<section class="mx-auto max-w-7xl px-4 py-14">
-    <p class="bp-eyebrow">{{ 'home.testimonies'|trans }}</p>
-    <h2 class="bp-section-title">{{ 'home.testimonies'|trans }}</h2>
-    <div class="mt-8 grid gap-6 md:grid-cols-3">
-        {% for testimonial in testimonials %}
-            <figure class="bp-card p-6">
-                <blockquote class="text-sm italic leading-relaxed text-slate-600">« {{ testimonial.storyText|translate_content(app.request.locale) }} »</blockquote>
-                <figcaption class="mt-4 font-semibold text-pasteur-dark">{{ testimonial.beneficiaryName }}{% if testimonial.roleOrContext %} <span class="font-normal text-slate-500">— {{ testimonial.roleOrContext|translate_content(app.request.locale) }}</span>{% endif %}</figcaption>
-            </figure>
-        {% endfor %}
+<section class="relative overflow-hidden bg-amini-ink py-24 text-white md:py-32">
+    <div class="pointer-events-none absolute inset-0 opacity-70" style="background-image: radial-gradient(circle at 100% -30%, #861D2C, #4C171F 16%, #271417 37%, transparent 60%);"></div>
+    <div class="bp-container relative">
+        <div class="max-w-2xl">
+            <p class="bp-eyebrow text-amini-gold before:!bg-amini-gold">{{ 'home.testimonies'|trans }}</p>
+            <h2 class="bp-section-title !text-white">Les voix du changement</h2>
+        </div>
+        <div class="mt-14 grid gap-6 md:grid-cols-3">
+            {% for testimonial in testimonials %}
+                <figure class="flex flex-col justify-between rounded-card border border-white/15 bg-white/5 p-8">
+                    <span class="font-serif text-6xl leading-none text-amini-gold">“</span>
+                    <blockquote class="mt-5 text-sm italic leading-8 text-white/75">{{ testimonial.storyText|translate_content(app.request.locale) }}</blockquote>
+                    <figcaption class="mt-8 border-t border-white/15 pt-5">
+                        <p class="font-medium">{{ testimonial.beneficiaryName }}</p>
+                        {% if testimonial.roleOrContext %}<p class="mt-1 font-mono text-[11px] uppercase tracking-[0.06em] text-amini-gold">{{ testimonial.roleOrContext|translate_content(app.request.locale) }}</p>{% endif %}
+                    </figcaption>
+                </figure>
+            {% endfor %}
+        </div>
     </div>
 </section>
 
-<section class="bg-white py-14">
-    <div class="mx-auto grid max-w-7xl gap-10 px-4 md:grid-cols-2">
+<section class="bg-white py-24 md:py-32">
+    <div class="bp-container grid gap-16 lg:grid-cols-2">
         <div>
             <p class="bp-eyebrow">{{ 'home.partners'|trans }}</p>
-            <h2 class="bp-section-title">{{ 'home.partners'|trans }}</h2>
-            <div class="mt-6 flex flex-wrap gap-6">
+            <h2 class="bp-section-title">Ils marchent avec nous</h2>
+            <div class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
                 {% for partner in partners %}
-                    <div class="w-28 text-center">
-                        {% if partner.logoPath %}<img src="{{ partner.logoPath starts with '/' ? partner.logoPath : asset('uploads/' ~ partner.logoPath) }}" alt="{{ partner.name|translate_content(app.request.locale) }}" class="mx-auto h-14 object-contain grayscale" loading="lazy">{% endif %}
-                        <p class="mt-2 text-xs text-slate-600">{{ partner.name|translate_content(app.request.locale) }}</p>
+                    <div class="flex h-28 flex-col items-center justify-center rounded-card border border-amini-line bg-amini-mist p-4 text-center">
+                        {% if partner.logoPath %}<img src="{{ partner.logoPath starts with '/' ? partner.logoPath : asset('uploads/' ~ partner.logoPath) }}" alt="{{ partner.name|translate_content(app.request.locale) }}" class="h-10 object-contain grayscale transition hover:grayscale-0" loading="lazy">{% endif %}
+                        <p class="mt-2 font-mono text-[11px] uppercase tracking-[0.06em] text-amini-muted">{{ partner.name|translate_content(app.request.locale) }}</p>
                     </div>
                 {% endfor %}
             </div>
         </div>
         <div>
             <p class="bp-eyebrow">{{ 'home.awards'|trans }}</p>
-            <h2 class="bp-section-title">{{ 'home.awards'|trans }}</h2>
-            <ul class="mt-6 space-y-3 text-sm text-slate-600">
-                {% for award in awards %}<li><strong class="text-pasteur-dark">{{ award.year }}</strong> — {{ award.title|translate_content(app.request.locale) }}{% if award.issuer %} ({{ award.issuer|translate_content(app.request.locale) }}){% endif %}</li>{% endfor %}
-            </ul>
+            <h2 class="bp-section-title">Reconnaissances</h2>
+            <div class="mt-10 border-l border-amini-line pl-6">
+                {% for award in awards %}
+                    <div class="relative py-4">
+                        <span class="absolute -left-[29px] top-6 h-2 w-2 bg-amini-gold"></span>
+                        <p class="font-mono text-[12px] tracking-[0.06em] text-amini-wine">{{ award.year }}</p>
+                        <p class="mt-2 text-lg font-medium text-amini-ink">{{ award.title|translate_content(app.request.locale) }}</p>
+                        {% if award.issuer %}<p class="mt-1 text-sm text-amini-steel">{{ award.issuer|translate_content(app.request.locale) }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
+    </div>
+</section>
+
+<section class="bp-container pb-8 pt-4">
+    <div class="bp-cta-dark">
+        <p class="bp-eyebrow text-amini-gold before:!bg-amini-gold">Agir ensemble</p>
+        <h2 class="mx-auto max-w-4xl text-4xl font-medium leading-[1.08] md:text-6xl">Votre soutien transforme des vies au Lualaba.</h2>
+        <p class="mx-auto max-w-2xl text-base leading-8 text-white/70">Parlons de votre projet, d'un partenariat ou de la façon dont vous pouvez accompagner nos actions.</p>
+        <a href="{{ path('app_contact', {_locale: app.request.locale}) }}" class="bp-btn bg-amini-gold text-amini-ink hover:bg-white">{{ 'nav.contact'|trans }} &rarr;</a>
     </div>
 </section>
 {% endblock %}
