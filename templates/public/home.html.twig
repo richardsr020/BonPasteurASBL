@@ -50,14 +50,15 @@
 
 {% set figures = settings.keyFigures ?? [] %}
 {% if figures|length %}
-    <section class="border-y border-amini-line bg-white py-10">
+    <section class="bg-white py-10" data-controller="figures" data-figures-interval-value="5000" data-figures-duration-value="1400">
         <div class="bp-container">
             <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                 {% for figure in figures %}
-                    <div class="flex items-start gap-4">
-                        <span class="mt-2 h-2 w-2 shrink-0 bg-amini-gold"></span>
+                    {% set figure_text = (figure.value ?? figure.number ?? '')|trim %}
+                    <div class="bp-figure flex items-start gap-4" data-figures-target="item">
+                        <span class="bp-figure-mark mt-2 h-2 w-2 shrink-0 bg-amini-gold"></span>
                         <div>
-                            <p class="text-4xl font-medium tracking-[-0.04em] text-amini-ink">{{ figure.value ?? figure.number ?? '' }}</p>
+                            <p class="text-4xl font-medium tracking-[-0.04em] text-amini-ink tabular-nums" data-figures-target="value" data-figures-value="{{ figure_text }}">{{ figure_text }}</p>
                             <p class="mt-2 font-mono text-[12px] uppercase tracking-[0.06em] text-amini-steel">{{ figure.label ?? '' }}</p>
                         </div>
                     </div>

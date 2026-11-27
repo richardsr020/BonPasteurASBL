@@ -10,13 +10,12 @@
 
 <header class="site-nav" data-controller="site-nav">
     <div class="bp-container flex h-[72px] items-center justify-between gap-4">
-        <a href="{{ path('app_home_localized', {_locale: locale}) }}" class="group flex items-center gap-3">
+        <a href="{{ path('app_home_localized', {_locale: locale}) }}" aria-label="{{ 'nav.home'|trans }}" class="group flex items-center gap-3">
             {% if settings and settings.logoPath %}<img src="{{ settings.logoPath starts with '/' ? settings.logoPath : asset('uploads/' ~ settings.logoPath) }}" alt="Logo ASBL Bon Pasteur" class="h-10 w-10 rounded-xl bg-amini-mist object-contain p-1">{% else %}<span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amini-ink text-xs font-bold tracking-tight text-amini-gold transition-all duration-300 group-hover:-translate-y-0.5 group-hover:bg-amini-wine">BP</span>{% endif %}
             <span class="font-mono text-[11px] font-medium uppercase leading-tight tracking-[0.06em] text-amini-ink">ASBL Bon Pasteur RDC<br><span class="text-amini-steel">Lualaba</span></span>
         </a>
 
         <nav class="hidden items-center gap-1 lg:flex" aria-label="Menu principal">
-            <a class="bp-nav-link {{ current_route == 'app_home_localized' ? 'bp-nav-link-active' : '' }}" href="{{ path('app_home_localized', {_locale: locale}) }}">{{ 'nav.home'|trans }}</a>
             <a class="bp-nav-link {{ current_route == 'app_about' ? 'bp-nav-link-active' : '' }}" href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
             <a class="bp-nav-link {{ current_route in ['app_projects', 'app_project_show'] ? 'bp-nav-link-active' : '' }}" href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
             <a class="bp-nav-link {{ current_route in ['app_articles', 'app_article_show'] ? 'bp-nav-link-active' : '' }}" href="{{ path('app_articles', {_locale: locale}) }}">{{ 'nav.news'|trans }}</a>
@@ -47,7 +46,6 @@
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16"/></svg>
                 </summary>
                 <nav class="bp-card mobile-menu absolute right-0 mt-3 grid max-h-[70vh] w-64 gap-1 overflow-y-auto p-3">
-                    <a class="bp-nav-link w-full justify-start" href="{{ path('app_home_localized', {_locale: locale}) }}">{{ 'nav.home'|trans }}</a>
                     <a class="bp-nav-link w-full justify-start" href="{{ path('app_about', {_locale: locale}) }}">{{ 'nav.about'|trans }}</a>
                     <a class="bp-nav-link w-full justify-start" href="{{ path('app_projects', {_locale: locale}) }}">{{ 'nav.projects'|trans }}</a>
                     <a class="bp-nav-link w-full justify-start" href="{{ path('app_articles', {_locale: locale}) }}">{{ 'nav.news'|trans }}</a>
@@ -72,7 +70,7 @@
     </div>
 {% endif %}
 
-<main>{% block public_content %}{% endblock %}</main>
+<main data-controller="section-reveal" data-section-reveal-interval-value="10000">{% block public_content %}{% endblock %}</main>
 
 <footer class="relative mt-24 overflow-hidden rounded-t-card bg-amini-ink text-white">
     <div class="pointer-events-none absolute inset-0 opacity-70" style="background-image: radial-gradient(circle at 100% -30%, #861D2C, #4C171F 16%, #271417 37%, transparent 60%);"></div>
